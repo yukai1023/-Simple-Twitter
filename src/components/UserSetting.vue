@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="userSetting">
     <div class="title">
       <h3>帳戶設定</h3>
     </div>
@@ -47,9 +47,15 @@
 </template>
 
 <style lang="sass" scoped>
+.userSetting
+  width: 73%
+  border-left: 1px solid #E6ECF0
+
 .title
   h3
+    font-weight: bold
     font-size: 19px
+    line-height: 28px
     padding: 13px 20px
     border-bottom: 1px solid #E6ECF0
 
@@ -78,18 +84,16 @@
   width: 100%
   border-radius: 4px 4px 0px 0px
   overflow: hidden
-
   .label
     position: absolute
     top: 20px
     left: 12px
-    font-size: 15px
+    font-size: 18px
     color: #657786
     font-weight: 500
     transform-origin: 0 0
     transform: translate3d(0,-12px,0) scale(.75)
     pointer-events: none
-
   input
     -webkit-appearance: none
     appearance: none
@@ -97,7 +101,7 @@
     border: 0
     outline: none
     box-shadow: inset 0 -2px 0 rgba(#657786,1)
-    padding: 16px 0 0 12px
+    padding: 24px 0 0 12px
     height: 56px
     font-size: 19px
     font-weight: 500
