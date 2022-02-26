@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="header">
-      <img src="../images/arrow.png" alt="" />
+      <label class="return" for="return-btn">
+        <img src="../images/arrow.png" alt="" />
+        <button type="button" @click="$router.back()" id="return-btn"></button>
+      </label>
       <div class="account">
         <label class="name">Karina</label>
         <label class="tweets">25推文</label>
@@ -28,7 +31,7 @@
           sint.
         </p>
         <div class="follow">
-          <span class="number">34 個</span>
+          <router-link class="number" to="/user/followList">34 個 </router-link>
           <span class="following">跟隨中</span>
           <span class="number">59 位</span>
           <span class="follower">跟隨者</span>
@@ -46,10 +49,14 @@
   align-items: center
   border-left: 1px solid #e6ecf0
   border-right: 1px solid #e6ecf0
-  img
-    width: 17px
-    height: 14px
-    margin: 0px 0 0px 19px
+  .return
+    cursor: pointer
+    img
+      width: 17px
+      height: 14px
+      margin: 0px 0 0px 19px
+    button
+      display: none
   .account
     display: flex
     flex-direction: column
@@ -115,6 +122,7 @@
       .number
         color: #000000
         font-weight: bold
+        text-decoration: none
       .following
         color: #657786
         margin-right: 20px

@@ -1,39 +1,13 @@
 <template>
   <div class="PopularUser">
     <h3>Popular</h3>
-    <div class="card">
+    <div v-for="user in users" :key="user.id" class="card">
       <div class="photo">
         <img src="../images/coverPhoto.png" alt="" />
       </div>
       <div class="UserAccount">
-        <label class="name">Pizza hut</label>
-        <label class="account">@pizzahut</label>
-      </div>
-      <div>
-        <button>跟隨</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="photo">
-        <img src="../images/coverPhoto.png" alt="" />
-      </div>
-      <div class="UserAccount">
-        <label class="name">Pizza hut</label>
-        <label class="account">@pizzahut</label>
-      </div>
-      <div>
-        <button>跟隨</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="photo">
-        <img src="../images/coverPhoto.png" alt="" />
-      </div>
-      <div class="UserAccount">
-        <label class="name">Pizza hut</label>
-        <label class="account">@pizzahut</label>
+        <label class="name">{{user.name}}</label>
+        <label class="account">@{{user.account}}</label>
       </div>
       <div>
         <button>跟隨</button>
@@ -41,6 +15,50 @@
     </div>
   </div>
 </template>
+
+<script>
+const dummyData = {
+  users: [
+    {
+      name: "Amy",
+      account: "AmazingAmy",
+      image: "",
+    },
+    {
+      name: "Cathy",
+      account: "AmazingCathy",
+      image: "",
+    },
+    {
+      name: "John",
+      account: "AmazingJohn",
+      image: "",
+    },
+    {
+      name: "Kenny",
+      account: "AmazingKenny",
+      image: "",
+    },
+  ],
+};
+
+export default {
+  data() {
+    return {
+      users: [],
+    };
+  },
+  created() {
+    this.fetchUsers();
+  },
+  methods: {
+    fetchUsers() {
+      const { users } = dummyData;
+      this.users = users;
+    },
+  },
+};
+</script>
 
 <style lang="sass" scoped>
 .PopularUser

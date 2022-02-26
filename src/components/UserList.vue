@@ -1,193 +1,36 @@
 <template>
-  <div class="list-container">
-    <div class="title">
-      <span>使用者列表</span>
-    </div>
-    <div class="list">
-      <div class="user">
-        <img class="background" src="../images/background@2x.png" />
-        <img class="face" src="../images/coverPhoto.png" alt="" />
-        <div class="content">
-          <p class="name">Karina</p>
-          <p class="account">@nanafox</p>
-          <div class="icon">
-            <img class="reply" src="../images/icon_reply.png" alt="" />
-            <span>1.5k</span>
-            <img class="like" src="../images/icon_like.png" alt="" />
-            <span>20k</span>
-          </div>
-          <div class="follow">
-            <span class="number">34 個</span>
-            <span class="following">跟隨中</span>
-            <span class="number">59 位</span>
-            <span class="follower">跟隨者</span>
-          </div>
-        </div>
+  <div class="user">
+    <img class="background" src="../images/background@2x.png" />
+    <img class="face" src="../images/coverPhoto.png" alt="" />
+    <div class="content">
+      <p class="name">{{ initialUser.name }}</p>
+      <p class="account">@{{ initialUser.account }}</p>
+      <div class="icon">
+        <img class="reply" src="../images/icon_reply.png" alt="" />
+        <span>{{ initialUser.tweet }}</span>
+        <img class="like" src="../images/icon_like.png" alt="" />
+        <span>{{ initialUser.like }}</span>
       </div>
-      <div class="user">
-        <img class="background" src="../images/background@2x.png" />
-        <img class="face" src="../images/coverPhoto.png" alt="" />
-        <div class="content">
-          <p class="name">Karina</p>
-          <p class="account">@nanafox</p>
-          <div class="icon">
-            <img class="reply" src="../images/icon_reply.png" alt="" />
-            <span>1.5k</span>
-            <img class="like" src="../images/icon_like.png" alt="" />
-            <span>20k</span>
-          </div>
-          <div class="follow">
-            <span class="number">34 個</span>
-            <span class="following">跟隨中</span>
-            <span class="number">59 位</span>
-            <span class="follower">跟隨者</span>
-          </div>
-        </div>
-      </div>
-      <div class="user">
-        <img class="background" src="../images/background@2x.png" />
-        <img class="face" src="../images/coverPhoto.png" alt="" />
-        <div class="content">
-          <p class="name">Karina</p>
-          <p class="account">@nanafox</p>
-          <div class="icon">
-            <img class="reply" src="../images/icon_reply.png" alt="" />
-            <span>1.5k</span>
-            <img class="like" src="../images/icon_like.png" alt="" />
-            <span>20k</span>
-          </div>
-          <div class="follow">
-            <span class="number">34 個</span>
-            <span class="following">跟隨中</span>
-            <span class="number">59 位</span>
-            <span class="follower">跟隨者</span>
-          </div>
-        </div>
-      </div>
-      <div class="user">
-        <img class="background" src="../images/background@2x.png" />
-        <img class="face" src="../images/coverPhoto.png" alt="" />
-        <div class="content">
-          <p class="name">Karina</p>
-          <p class="account">@nanafox</p>
-          <div class="icon">
-            <img class="reply" src="../images/icon_reply.png" alt="" />
-            <span>1.5k</span>
-            <img class="like" src="../images/icon_like.png" alt="" />
-            <span>20k</span>
-          </div>
-          <div class="follow">
-            <span class="number">34 個</span>
-            <span class="following">跟隨中</span>
-            <span class="number">59 位</span>
-            <span class="follower">跟隨者</span>
-          </div>
-        </div>
-      </div>
-      <div class="user">
-        <img class="background" src="../images/background@2x.png" />
-        <img class="face" src="../images/coverPhoto.png" alt="" />
-        <div class="content">
-          <p class="name">Karina</p>
-          <p class="account">@nanafox</p>
-          <div class="icon">
-            <img class="reply" src="../images/icon_reply.png" alt="" />
-            <span>1.5k</span>
-            <img class="like" src="../images/icon_like.png" alt="" />
-            <span>20k</span>
-          </div>
-          <div class="follow">
-            <span class="number">34 個</span>
-            <span class="following">跟隨中</span>
-            <span class="number">59 位</span>
-            <span class="follower">跟隨者</span>
-          </div>
-        </div>
-      </div>
-            <div class="user">
-        <img class="background" src="../images/background@2x.png" />
-        <img class="face" src="../images/coverPhoto.png" alt="" />
-        <div class="content">
-          <p class="name">Karina</p>
-          <p class="account">@nanafox</p>
-          <div class="icon">
-            <img class="reply" src="../images/icon_reply.png" alt="" />
-            <span>1.5k</span>
-            <img class="like" src="../images/icon_like.png" alt="" />
-            <span>20k</span>
-          </div>
-          <div class="follow">
-            <span class="number">34 個</span>
-            <span class="following">跟隨中</span>
-            <span class="number">59 位</span>
-            <span class="follower">跟隨者</span>
-          </div>
-        </div>
-      </div>
-            <div class="user">
-        <img class="background" src="../images/background@2x.png" />
-        <img class="face" src="../images/coverPhoto.png" alt="" />
-        <div class="content">
-          <p class="name">Karina</p>
-          <p class="account">@nanafox</p>
-          <div class="icon">
-            <img class="reply" src="../images/icon_reply.png" alt="" />
-            <span>1.5k</span>
-            <img class="like" src="../images/icon_like.png" alt="" />
-            <span>20k</span>
-          </div>
-          <div class="follow">
-            <span class="number">34 個</span>
-            <span class="following">跟隨中</span>
-            <span class="number">59 位</span>
-            <span class="follower">跟隨者</span>
-          </div>
-        </div>
-      </div>
-            <div class="user">
-        <img class="background" src="../images/background@2x.png" />
-        <img class="face" src="../images/coverPhoto.png" alt="" />
-        <div class="content">
-          <p class="name">Karina</p>
-          <p class="account">@nanafox</p>
-          <div class="icon">
-            <img class="reply" src="../images/icon_reply.png" alt="" />
-            <span>1.5k</span>
-            <img class="like" src="../images/icon_like.png" alt="" />
-            <span>20k</span>
-          </div>
-          <div class="follow">
-            <span class="number">34 個</span>
-            <span class="following">跟隨中</span>
-            <span class="number">59 位</span>
-            <span class="follower">跟隨者</span>
-          </div>
-        </div>
-      </div>
-            <div class="user">
-        <img class="background" src="../images/background@2x.png" />
-        <img class="face" src="../images/coverPhoto.png" alt="" />
-        <div class="content">
-          <p class="name">Karina</p>
-          <p class="account">@nanafox</p>
-          <div class="icon">
-            <img class="reply" src="../images/icon_reply.png" alt="" />
-            <span>1.5k</span>
-            <img class="like" src="../images/icon_like.png" alt="" />
-            <span>20k</span>
-          </div>
-          <div class="follow">
-            <span class="number">34 個</span>
-            <span class="following">跟隨中</span>
-            <span class="number">59 位</span>
-            <span class="follower">跟隨者</span>
-          </div>
-        </div>
+      <div class="follow">
+        <span class="number">{{ initialUser.following }} 個</span>
+        <span class="following">跟隨中</span>
+        <span class="number">{{ initialUser.follower }} 位</span>
+        <span class="follower">跟隨者</span>
       </div>
     </div>
   </div>
 </template>
 
+<script>
+export default {
+  props: {
+    initialUser: {
+      type: Object,
+      required: true,
+    },
+  },
+};
+</script>
 <style lang="sass" scoped>
 .list-container
   width: 100%

@@ -1,67 +1,51 @@
 <template>
-  <div class="TimeLine">
-    <div class="Usertweet">
-      <div class="UserPhoto">
-        <img src="../images/coverPhoto2.jpeg" alt="" />
-      </div>
-      <div class="TweetsContent">
-        <div class="UserAccount">
-          <label class="name">Jack</label>
-          <label class="account">@JKBoy</label>
-          <span>・</span>
-          <label class="time">3 小時</label>
-        </div>
-        <div class="article">
-          <p>
-            Well, I will call you darlin' and everything will be okay,'Cause I
-            know that I am yours and you are mine,Doesn't matter anyway,In the
-            night, we'll take a walk, it's nothing funny,Just to talk
-          </p>
-        </div>
-        <div class="replyLike">
-          <img class="replyIcon" src="../images/icon_reply.png" alt="" />
-          <label>13</label>
-          <img class="likeIcon" src="../images/icon_like.png" alt="" />
-          <label>76</label>
-        </div>
-      </div>
+  <div class="Usertweet">
+    <div class="UserPhoto">
+      <img src="../images/coverPhoto2.jpeg" alt="" />
     </div>
-    <div class="Usertweet">
-      <div class="UserPhoto">
-        <img src="../images/coverPhoto2.jpeg" alt="" />
+    <div class="TweetsContent">
+      <div class="UserAccount">
+        <label class="name">{{ initialTweet.name }}</label>
+        <label class="account">@{{ initialTweet.account }}</label>
+        <span>・</span>
+        <label class="time">{{ initialTweet.createdAt | fromNow }}</label>
       </div>
-      <div class="TweetsContent">
-        <div class="UserAccount">
-          <label class="name">Jack</label>
-          <label class="account">@JKBoy</label>
-          <span>・</span>
-          <label class="time">3 小時</label>
-        </div>
-        <div class="article">
-          <p>
-            Well, I will call you darlin' and everything will be okay,'Cause I
-            know that I am yours and you are mine,Doesn't matter anyway,In the
-            night, we'll take a walk, it's nothing funny,Just to talk
-          </p>
-        </div>
-        <div class="replyLike">
-          <img class="replyIcon" src="../images/icon_reply.png" alt="" />
-          <label>13</label>
-          <img class="likeIcon" src="../images/icon_like.png" alt="" />
-          <label>76</label>
-        </div>
+      <div class="article">
+        <p>
+          {{ initialTweet.content }}
+        </p>
+      </div>
+      <div class="replyLike">
+        <img class="replyIcon" src="../images/icon_reply.png" alt="" />
+        <label>{{ initialTweet.reply }}</label>
+        <img class="likeIcon" src="../images/icon_like.png" alt="" />
+        <label>{{ initialTweet.like }}</label>
       </div>
     </div>
   </div>
 </template>
 
-<style lang="sass" scoped>
-.TimeLine
-  width: 600px
-  height: 100vh
-  border-left: 1px solid #E6ECF0
-  border-right: 1px solid #E6ECF0
+<script>
+import moment from "moment";
+export default {
+  props: {
+    initialTweet: {
+      type: Object,
+      required: true,
+    },
+  },
+  filters: {
+    fromNow(datetime) {
+      if (!datetime) {
+        return "-";
+      }
+      return moment(datetime).fromNow();
+    },
+  },
+};
+</script>
 
+<style lang="sass" scoped>
 .Usertweet
   display: flex
   padding: 13px 10px 13px 15px
