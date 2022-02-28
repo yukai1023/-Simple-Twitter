@@ -25,6 +25,7 @@
 export default {
   methods: {
     logout() {
+      this.$store.commit("revokeAuthentication");
       this.$router.push("/login");
     },
   },

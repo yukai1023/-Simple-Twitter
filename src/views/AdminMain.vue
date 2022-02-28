@@ -20,39 +20,7 @@
 <script>
 import AdminNavBar from "./../components/AdminNavBar";
 import TweetList from "./../components/TweetList";
-
-const dummyData = {
-  tweets: [
-    {
-      name: "Amy",
-      account: "AmazingAmy",
-      image: "",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing ...",
-      createdAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      name: "Cathy",
-      account: "AmazingCathy",
-      image: "",
-      content: "Lorem ascascsacasca",
-      createdAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      name: "John",
-      account: "AmazingJohn",
-      image: "",
-      content: "Lorem ipsum dolor sit amet, consesadwqdqwd.",
-      createdAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      name: "Kenny",
-      account: "AmazingKenny",
-      image: "",
-      content: "Lorem ipsum dolor sit amet, consecasd.",
-      createdAt: "2019-06-22T09:00:43.000Z",
-    },
-  ],
-};
+import adminAPI from "./../apis/admin";
 
 export default {
   components: {
@@ -68,9 +36,16 @@ export default {
     this.fetchTweets();
   },
   methods: {
-    fetchTweets() {
-      const { tweets } = dummyData;
-      this.tweets = tweets;
+    async fetchTweets() {
+      try {
+        const response = await adminAPI.getTweets();
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.tweets = response.data.data.tweets;
+      } catch (error) {
+        console.log("error");
+      }
     },
   },
 };

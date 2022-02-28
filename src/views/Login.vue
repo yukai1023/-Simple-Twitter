@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import authorizationAPI from "./../apis/authorization";
 export default {
   data() {
     return {
@@ -55,7 +56,23 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      this.$router.push("/main");
+      try {
+        const response = await authorizationAPI.signIn({
+          account: this.account,
+          password: this.password,
+        });
+        const { data } = response;
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        // 將 token 存放在 localStorage 內
+        this.$store.commit("setCurrentUser", data.data.user);
+        localStorage.setItem("token", data.data.token);
+        this.$router.push("/main");
+      } catch (error) {
+        this.password = "";
+        console.log("error");
+      }
     },
   },
 };

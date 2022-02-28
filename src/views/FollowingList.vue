@@ -1,28 +1,28 @@
 <template>
-  <div class="user-container">
+  <div class="follow-container">
     <!--左側導覽列-->
     <NavBar />
-    <!--推文模板-->
-    <TweetModal />
-    <div class="main">
-      <!--中間個人資料-->
-      <UserProfile />
-      <!--編輯個人資料模板-->
-      <UserEditModal />
+    <!-- 中上 -->
+    <div clas="main">
+      <FollowerListHeader />
+      <!-- 中下 -->
       <div>
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link">推文</a>
+            <a class="nav-link">跟隨者</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link">推文與回覆</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link">喜歡的內容</a>
+            <a class="nav-link">正在跟隨</a>
           </li>
         </ul>
       </div>
-      <UserTweet />
+      <div class="UserFollow">
+        <UserFollow
+          v-for="following in followings"
+          :key="following.id"
+          :initial-following="following"
+        />
+      </div>
     </div>
     <!--右側熱門用戶-->
     <div class="PopularUser">
@@ -33,32 +33,38 @@
 </template>
 
 <script>
-import NavBar from "./../components/NavBar";
-import TweetModal from "./../components/TweetModal";
-import UserProfile from "./../components/UserProfile";
-import UserTweet from "./../components/UserTweet";
-import PopularUser from "./../components/PopularUser";
-import UserEditModal from "./../components/UserEditModal";
+import NavBar from "../components/NavBar";
+import PopularUser from "../components/PopularUser";
+import FollowerListHeader from "../components/FollowerListHeader";
+import UserFollow from "../components/UserFollow";
 import userAPI from "./../apis/users";
 export default {
   components: {
     NavBar,
-    TweetModal,
-    UserProfile,
-    UserTweet,
     PopularUser,
-    UserEditModal,
+    FollowerListHeader,
+    UserFollow,
   },
   data() {
     return {
       users: [],
+      followings: [],
     };
   },
+  watch: {
+    followings() {
+      const { id: userId } = this.$route.params;
+      this.fetchFollowing(userId);
+      this.fetchPopularUsers();
+    },
+  },
   created() {
-    this.fetchUsers();
+    this.fetchPopularUsers();
+    const { id: userId } = this.$route.params;
+    this.fetchFollowing(userId);
   },
   methods: {
-    async fetchUsers() {
+    async fetchPopularUsers() {
       try {
         const response = await userAPI.getPopular();
         if (response.statusText !== "OK") {
@@ -69,20 +75,33 @@ export default {
         console.log("error");
       }
     },
+    async fetchFollowing(userId) {
+      try {
+        const response = await userAPI.getFollowings({
+          userId,
+        });
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.followings = response.data.data.users;
+      } catch (error) {
+        console.log("error");
+      }
+    },
   },
 };
 </script>
 
 <style lang="sass" scoped>
-.user-container
+.follow-container
   display: flex
-
-.main
-  display: flex
-  flex-direction: column
+  .main
+    width: 600px
+    display: flex
+    flex-direction: column
 
 .nav-tabs
-  padding-top: 25px
+  padding-top: 10px
   border-left: 1px solid #e6ecf0
   border-right: 1px solid #e6ecf0
   .nav-item
@@ -114,4 +133,8 @@ h3
   padding: 10px 0 0 15px
   font-size: 18px
   font-weight: bold
+
+.UserFollow
+  border-left: 1px solid #E6ECF0
+  border-right: 1px solid #E6ECF0
 </style>

@@ -17,7 +17,10 @@
       </div>
     </div>
     <!--右側熱門用戶-->
-    <PopularUser />
+    <div class="PopularUser">
+      <h3>Popular</h3>
+      <PopularUser v-for="user in users" :key="user.id" :initial-user="user" />
+    </div>
   </div>
 </template>
 
@@ -27,47 +30,7 @@ import SendTweet from "./../components/SendTweet";
 import TweetModal from "./../components/TweetModal";
 import TimeLine from "./../components/TimeLine";
 import PopularUser from "./../components/PopularUser";
-
-const dummyData = {
-  tweets: [
-    {
-      name: "Amy",
-      account: "AmazingAmy",
-      image: "",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing ...",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      reply: "15",
-      like: "88",
-    },
-    {
-      name: "Cathy",
-      account: "AmazingCathy",
-      image: "",
-      content: "Lorem ascascsacasca",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      reply: "15",
-      like: "88",
-    },
-    {
-      name: "John",
-      account: "AmazingJohn",
-      image: "",
-      content: "Lorem ipsum dolor sit amet, consesadwqdqwd.",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      reply: "15",
-      like: "88",
-    },
-    {
-      name: "Kenny",
-      account: "AmazingKenny",
-      image: "",
-      content: "Lorem ipsum dolor sit amet, consecasd.",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      reply: "15",
-      like: "88",
-    },
-  ],
-};
+import userAPI from "./../apis/users";
 
 export default {
   components: {
@@ -80,15 +43,35 @@ export default {
   data() {
     return {
       tweets: [],
+      users: [],
     };
   },
   created() {
     this.fetchTweets();
+    this.fetchUsers();
   },
   methods: {
-    fetchTweets() {
-      const { tweets } = dummyData;
-      this.tweets = tweets;
+    async fetchTweets() {
+      try {
+        const response = await userAPI.getTweets();
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.tweets = response.data.data.tweets;
+      } catch (error) {
+        console.log("error");
+      }
+    },
+    async fetchUsers() {
+      try {
+        const response = await userAPI.getPopular();
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.users = response.data.data.users;
+      } catch (error) {
+        console.log("error");
+      }
     },
   },
 };
@@ -107,4 +90,16 @@ export default {
   height: 100vh
   border-left: 1px solid #E6ECF0
   border-right: 1px solid #E6ECF0
+
+.PopularUser
+  margin: 15px 0 0 30px
+  width: 350px
+  height: 756px
+  background: #F5F8FA
+  border-radius: 14px
+
+h3
+  padding: 10px 0 0 15px
+  font-size: 18px
+  font-weight: bold
 </style>

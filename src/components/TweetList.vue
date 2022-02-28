@@ -1,15 +1,15 @@
 <template>
   <div class="tweet">
-    <img class="face" src="../images/coverPhoto.png" alt="" />
+    <img class="face" :src="initialTweet.User.avatar" alt="" />
     <div class="content">
       <div>
-        <label class="name">{{ initialTweet.name }}</label>
-        <label class="account">@{{ initialTweet.account }}</label>
+        <label class="name">{{ initialTweet.User.name }}</label>
+        <label class="account">@{{ initialTweet.User.account }}</label>
         <span>・</span>
         <label class="time"> {{ initialTweet.createdAt | fromNow }}</label>
       </div>
       <div>
-        <p>{{ initialTweet.content }}</p>
+        <p>{{ initialTweet.description }}</p>
       </div>
     </div>
     <img class="cross" src="../images/crossGray@2x.png" alt="" />

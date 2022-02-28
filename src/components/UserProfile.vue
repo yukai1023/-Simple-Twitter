@@ -14,8 +14,8 @@
     <div class="profile">
       <div class="photo">
         <div class="modal-photo">
-          <img class="background" src="../images/background@2x.png" />
-          <img class="face" src="../images/coverPhoto.png" alt="" />
+          <img class="background" :src="user.cover" />
+          <img class="face" :src="user.avatar" alt="" />
         </div>
       </div>
       <div class="editBtn">
@@ -24,16 +24,19 @@
         </button>
       </div>
       <div class="content">
-        <p class="name">Karina</p>
-        <p class="account">@nanafox</p>
+        <p class="name">{{ user.name }}</p>
+        <p class="account">@{{ user.account }}</p>
         <p class="introduce">
-          Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-          sint.
+          {{ user.introduction }}
         </p>
         <div class="follow">
-          <router-link class="number" to="/user/followList">34 個 </router-link>
+          <router-link
+            class="number"
+            :to="{ name: 'followingList', params: { id: user.id } }"
+            >{{ user.following }} 個</router-link
+          >
           <span class="following">跟隨中</span>
-          <span class="number">59 位</span>
+          <span class="number">{{ user.followers }} 位</span>
           <span class="follower">跟隨者</span>
         </div>
       </div>
@@ -41,6 +44,41 @@
   </div>
 </template>
 
+<script>
+import { mapState } from "vuex";
+import userAPI from "./../apis/users";
+export default {
+  data() {
+    return {
+      user: [],
+    };
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
+  },
+  watch: {
+    user() {
+      this.fetchUsers();
+    },
+  },
+  created() {
+    this.fetchUsers();
+  },
+  methods: {
+    async fetchUsers() {
+      try { 
+        const response = await userAPI.getUser({ userId: this.currentUser.id });
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.user = response.data.data.user;
+      } catch (error) {
+        console.log("error");
+      }
+    },
+  },
+};
+</script>
 <style lang="sass" scoped>
 .header
   width: 600px
@@ -115,6 +153,7 @@
       padding-top: 10px
       font-size: 14px
       line-height: 20px
+      width: 600px
     .follow
       padding-top: 10px
       font-size: 14px

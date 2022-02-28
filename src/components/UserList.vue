@@ -1,20 +1,20 @@
 <template>
   <div class="user">
-    <img class="background" src="../images/background@2x.png" />
-    <img class="face" src="../images/coverPhoto.png" alt="" />
+    <img class="background" :src="initialUser.cover" />
+    <img class="face" :src="initialUser.avatar" alt="" />
     <div class="content">
       <p class="name">{{ initialUser.name }}</p>
       <p class="account">@{{ initialUser.account }}</p>
       <div class="icon">
         <img class="reply" src="../images/icon_reply.png" alt="" />
-        <span>{{ initialUser.tweet }}</span>
+        <span>{{ initialUser.tweetNum }}</span>
         <img class="like" src="../images/icon_like.png" alt="" />
-        <span>{{ initialUser.like }}</span>
+        <span>{{ initialUser.likeNum }}</span>
       </div>
       <div class="follow">
-        <span class="number">{{ initialUser.following }} 個</span>
+        <span class="number">{{ initialUser.followingNum }} 個</span>
         <span class="following">跟隨中</span>
-        <span class="number">{{ initialUser.follower }} 位</span>
+        <span class="number">{{ initialUser.followerNum }} 位</span>
         <span class="follower">跟隨者</span>
       </div>
     </div>

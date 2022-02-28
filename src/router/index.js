@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import store from './../store'
 Vue.use(VueRouter)
 
 const routes = [
@@ -25,9 +25,9 @@ const routes = [
     component: () => import('../views/User.vue')
   },
   {
-    path: '/user/followList',
-    name: 'followList',
-    component: () => import('../views/FollowList.vue')
+    path: '/user/followingList/:id',
+    name: 'followingList',
+    component: () => import('../views/FollowingList.vue')
   },
   {
     path: '/setting',
@@ -55,4 +55,31 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach(async (to, from, next) => {
+  // 從 localStorage 取出 token
+  const tokenInLocalStorage = localStorage.getItem('token')
+  const tokenInStore = store.state.token
+  let isAuthenticated = store.state.isAuthenticated
+
+  // 如果有 token 的話才驗證
+  if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
+    isAuthenticated = await store.dispatch('fetchCurrentUser')
+  }
+
+  // 對於不需要驗證 token 的頁面
+  const pathsWithoutAuthentication = ['login', 'regist', 'admin']
+
+  // 如果 token 無效且進入需要驗證的頁面則轉址到登入頁
+  if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name)) {
+    next('/login')
+    return
+  }
+
+  // 如果 token 有效且進入不需要驗證到頁面則轉址到餐廳首頁
+  if (isAuthenticated && pathsWithoutAuthentication.includes(to.name)) {
+    next('/main')
+    return
+  }
+  next()
+})
 export default router

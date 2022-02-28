@@ -8,11 +8,7 @@
         <span>使用者列表</span>
       </div>
       <div class="list">
-        <UserList
-          v-for="user in users"
-          :key="user.id"
-          :initial-user="user"
-        />
+        <UserList v-for="user in users" :key="user.id" :initial-user="user" />
       </div>
     </div>
   </div>
@@ -20,47 +16,7 @@
 <script>
 import AdminNavBar from "./../components/AdminNavBar";
 import UserList from "./../components/UserList";
-
-const dummyData = {
-  users: [
-    {
-      name: "Amy",
-      account: "AmazingAmy",
-      image: "",
-      tweet: "1.5k",
-      like: "20k",
-      following: "34",
-      follower: "59",
-    },
-    {
-      name: "Cathy",
-      account: "AmazingCathy",
-      image: "",
-      tweet: "1.5k",
-      like: "20k",
-      following: "34",
-      follower: "59",
-    },
-    {
-      name: "John",
-      account: "AmazingJohn",
-      image: "",
-      tweet: "1.5k",
-      like: "20k",
-      following: "34",
-      follower: "59",
-    },
-    {
-      name: "Kenny",
-      account: "AmazingKenny",
-      image: "",
-      tweet: "1.5k",
-      like: "20k",
-      following: "34",
-      follower: "59",
-    },
-  ],
-};
+import adminAPI from "./../apis/admin";
 
 export default {
   components: {
@@ -76,9 +32,17 @@ export default {
     this.fetchUsers();
   },
   methods: {
-    fetchUsers() {
-      const { users } = dummyData;
-      this.users = users;
+    async fetchUsers() {
+      try {
+        const response = await adminAPI.getUsers();
+        console.log(response)
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.users = response.data.data.users;
+      } catch (error) {
+        console.log("error");
+      }
     },
   },
 };

@@ -1,106 +1,132 @@
 <template>
-  <div
-    class="modal fade"
-    id="edit-modal"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <img
-            aria-label="Close"
-            class="cross"
-            src="../images/cross@2x.png"
-            data-bs-dismiss="modal"
-            type="button"
-          />
-          <span>編輯個人資料</span>
-          <button type="button" class="btn-primary">儲存</button>
-        </div>
-        <div class="modal-photo">
-          <img class="background" :src="background" />
-          <img class="cross" src="../images/crossWhite@2x.png" alt="" />
-          <label class="background-file" for="background-file">
+  <form @submit.stop.prevent="handleSubmit">
+    <div
+      class="modal fade"
+      id="edit-modal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
             <img
-              class="camera-background"
-              src="../images/camera@2x.png"
-              alt=""
+              aria-label="Close"
+              id="close"
+              class="cross"
+              src="../images/cross@2x.png"
+              data-bs-dismiss="modal"
+              type="button"
             />
-            <input
-              @change="backgroundChange"
-              type="file"
-              id="background-file"
-            />
-          </label>
-          <label class="face-file" for="face-file">
-            <img class="face" :src="image" alt="" />
-            <img class="camera-face" src="../images/camera@2x.png" alt="" />
-            <input @change="imageChange" type="file" id="face-file" />
-          </label>
-        </div>
-        <div class="modal-body" id="movie-modal-body">
-          <div class="form-name">
-            <label class="account-font" for="name">名稱</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              maxlength="50"
-              v-model="name"
-              class="form-input"
-              autocomplete="username"
-              required
-              autofocus
-            />
+            <span>編輯個人資料</span>
+            <button type="submit" :disabled="isProcessing" class="btn-primary">
+              儲存
+            </button>
           </div>
-          <p>{{ name.length }}/50</p>
-          <div class="form-introduce">
-            <label class="account-font" for="introduce">自我介紹</label>
-            <textarea
-              id="introduce"
-              class="form-input"
-              v-model="introduce"
-              maxlength="160"
-              style="width: 570px; height: 110px"
-              rows="7"
-              cols="20"
-              required
-              autofocus
-            ></textarea>
+          <div class="modal-photo">
+            <img class="background" :src="user.cover" />
+            <img class="cross" src="../images/crossWhite@2x.png" alt="" />
+            <label class="background-file" for="cover">
+              <img
+                class="camera-background"
+                src="../images/camera@2x.png"
+                alt=""
+              />
+              <input
+                @change="backgroundChange"
+                type="file"
+                name="cover"
+                id="cover"
+              />
+            </label>
+            <label class="face-file" for="avatar">
+              <img class="face" :src="user.avatar" alt="" />
+              <img class="camera-face" src="../images/camera@2x.png" alt="" />
+              <input
+                @change="imageChange"
+                type="file"
+                name="avatar"
+                id="avatar"
+              />
+            </label>
           </div>
-          <p>{{ introduce.length }}/160</p>
+          <div class="modal-body" id="movie-modal-body">
+            <div class="form-name">
+              <label class="account-font" for="name">名稱</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                maxlength="50"
+                v-model="user.name"
+                class="form-input"
+                autocomplete="username"
+                required
+                autofocus
+              />
+            </div>
+            <p>/50</p>
+            <div class="form-introduce">
+              <label class="account-font" for="introduction">自我介紹</label>
+              <textarea
+                id="introduction"
+                name="introduction"
+                class="form-input"
+                v-model="user.introduction"
+                maxlength="160"
+                style="width: 570px; height: 110px"
+                rows="7"
+                cols="20"
+                required
+                autofocus
+              ></textarea>
+            </div>
+            <p>/160</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
+import { mapState } from "vuex";
+import userAPI from "./../apis/users";
 export default {
   data() {
     return {
-      name: "",
-      introduce: "",
-      image: "",
-      background: "",
+      user: [],
+      isProcessing: false,
     };
   },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
+  },
+  created() {
+    this.fetchUsers();
+  },
   methods: {
-    async handleSubmit() {
-      this.$router.push("/main");
+    async fetchUsers() {
+      try {
+        const response = await userAPI.getUser({ userId: this.currentUser.id });
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.user = response.data.data.user;
+      } catch (error) {
+        console.log("error");
+      }
     },
     imageChange(e) {
       const { files } = e.target;
 
       if (files.length === 0) {
         // 使用者沒有選擇上傳的檔案
-        this.image = "";
+        this.currentUser.avatar = "";
       } else {
         // 否則產生預覽圖
         const imageURL = window.URL.createObjectURL(files[0]);
-        this.image = imageURL;
+        this.user.avatar = imageURL;
       }
     },
     backgroundChange(e) {
@@ -108,11 +134,30 @@ export default {
 
       if (files.length === 0) {
         // 使用者沒有選擇上傳的檔案
-        this.image = "";
+        this.currentUser.cover = "";
       } else {
         // 否則產生預覽圖
         const backgroundURL = window.URL.createObjectURL(files[0]);
-        this.background = backgroundURL;
+        this.user.cover = backgroundURL;
+      }
+    },
+    async handleSubmit(e) {
+      try {
+        this.isProcessing = true;
+        const form = e.target; // <form></form>
+        const formData = new FormData(form);
+        const { data } = await userAPI.getEditModal({
+          userId: this.user.id,
+          formData: formData,
+        });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        document.getElementById("close").click();
+      } catch (error) {
+        this.isProcessing = false;
       }
     },
   },

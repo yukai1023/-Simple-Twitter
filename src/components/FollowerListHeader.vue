@@ -6,13 +6,39 @@
         <button type="button" @click="$router.back()" id="return-btn"></button>
       </label>
       <div class="account">
-        <label class="name">Karina</label>
+        <label class="name">{{ user.name }}</label>
         <label class="tweets">25推文</label>
       </div>
     </div>
   </div>
 </template>
-
+<script>
+import userAPI from "./../apis/users";
+export default {
+  data() {
+    return {
+      user: [],
+    };
+  },
+  created() {
+    const { id: userId } = this.$route.params;
+    this.fetchUser(userId);
+  },
+  methods: {
+    async fetchUser(userId) {
+      try {
+        const response = await userAPI.getUser({ userId });
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.user = response.data.data.user;
+      } catch (error) {
+        console.log("error");
+      }
+    },
+  },
+};
+</script>
 <style lang="sass" scoped>
 .Follower
   width: 600px

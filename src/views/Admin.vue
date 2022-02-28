@@ -7,12 +7,12 @@
       </div>
 
       <div class="form-label-group">
-        <label class="account-font" for="email">帳號</label>
+        <label class="account-font" for="account">帳號</label>
         <input
-          id="email"
-          v-model="email"
-          name="email"
-          type="email"
+          id="account"
+          v-model="account"
+          name="account"
+          type="text"
           class="form-control"
           autocomplete="username"
           required
@@ -45,7 +45,7 @@
 export default {
   data() {
     return {
-      email: "",
+      account: "",
       password: "",
       isProcessing: false,
     };

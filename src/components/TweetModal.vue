@@ -24,6 +24,7 @@
             class="form-control input"
             style="width: 700px; height: 160px"
             rows="7"
+            v-model="content"
             cols="20"
             placeholder="有什麼新鮮事？"
             required
@@ -31,6 +32,7 @@
           ></textarea>
         </div>
         <div class="modal-footer">
+          <span></span>
           <button type="button" class="btn-primary">推文</button>
         </div>
       </div>
@@ -38,6 +40,23 @@
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      content: "",
+      isShow: false,
+    };
+  },
+  watch: {
+    content() {
+      if (this.content.length > 140) {
+        console.log('123')
+      }
+    },
+  },
+};
+</script>
 <style scoped>
 .btn-primary {
   background: #ff6600;
@@ -85,6 +104,4 @@
 textarea {
   resize: none;
 }
-
-
 </style>

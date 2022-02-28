@@ -1,25 +1,25 @@
 <template>
   <div class="Usertweet">
     <div class="UserPhoto">
-      <img src="../images/coverPhoto2.jpeg" alt="" />
+      <img :src="initialTweet.User.avatar" alt="" />
     </div>
     <div class="TweetsContent">
       <div class="UserAccount">
-        <label class="name">{{ initialTweet.name }}</label>
-        <label class="account">@{{ initialTweet.account }}</label>
+        <label class="name">{{ initialTweet.User.name }}</label>
+        <label class="account">@{{ initialTweet.User.account }}</label>
         <span>・</span>
         <label class="time">{{ initialTweet.createdAt | fromNow }}</label>
       </div>
       <div class="article">
         <p>
-          {{ initialTweet.content }}
+          {{ initialTweet.description }}
         </p>
       </div>
       <div class="replyLike">
         <img class="replyIcon" src="../images/icon_reply.png" alt="" />
-        <label>{{ initialTweet.reply }}</label>
+        <label>{{ initialTweet.replyCount }}</label>
         <img class="likeIcon" src="../images/icon_like.png" alt="" />
-        <label>{{ initialTweet.like }}</label>
+        <label>{{ initialTweet.likeCount }}</label>
       </div>
     </div>
   </div>
