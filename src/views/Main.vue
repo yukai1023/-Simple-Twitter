@@ -57,6 +57,7 @@ export default {
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
+        console.log("getTweets");
         this.tweets = response.data.data.tweets;
       } catch (error) {
         console.log("error");
@@ -68,6 +69,7 @@ export default {
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
+        console.log("getUser");
         this.users = response.data.data.users;
       } catch (error) {
         console.log("error");

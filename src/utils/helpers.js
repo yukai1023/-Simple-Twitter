@@ -1,7 +1,7 @@
 // ./src/utils/helpers.js
 import axios from 'axios'
 
-const baseURL = 'https://evening2-falls-05083.herokuapp.com/api'
+const baseURL = 'https://evening-falls-05083.herokuapp.com/api'
 // https://evening-falls-05083.herokuapp.com/api
 // https://evening2-falls-05083.herokuapp.com/api
 const axiosInstance = axios.create({

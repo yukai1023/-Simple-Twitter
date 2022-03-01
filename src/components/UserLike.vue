@@ -29,7 +29,7 @@
 import moment from "moment";
 export default {
   props: {
-    initialTweet: {
+    initialLike: {
       type: Object,
       required: true,
     },
@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      tweet: this.initialTweet,
+      tweet: this.initialLike,
     };
   },
 };

@@ -42,17 +42,33 @@
 </template>
 
 <script>
+import authorizationAPI from "./../apis/authorization";
 export default {
   data() {
     return {
       account: "",
       password: "",
-      isProcessing: false,
     };
   },
   methods: {
     async handleSubmit() {
-      this.$router.push("/admin/main");
+      try {
+        const response = await authorizationAPI.adminSignIn({
+          account: this.account,
+          password: this.password,
+        });
+        const { data } = response;
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        // 將 token 存放在 localStorage 內
+        this.$store.commit("setCurrentUser", data.data.user);
+        localStorage.setItem("token", data.data.token);
+        this.$router.push("/admin/main");
+      } catch (error) {
+        this.password = "";
+        console.log("error");
+      }
     },
   },
 };

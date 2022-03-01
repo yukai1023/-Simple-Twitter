@@ -12,10 +12,16 @@
         <p>{{ initialTweet.description }}</p>
       </div>
     </div>
-    <img class="cross" src="../images/crossGray@2x.png" alt="" />
+    <img
+      class="cross"
+      src="../images/crossGray@2x.png"
+      alt=""
+      @click.stop.prevent="deleteTweet(initialTweet.id)"
+    />
   </div>
 </template>
 <script>
+import adminAPI from "./../apis/admin";
 import moment from "moment";
 export default {
   props: {
@@ -32,11 +38,26 @@ export default {
       return moment(datetime).fromNow();
     },
   },
+  methods: {
+    async deleteTweet(tweetId) {
+      try {
+        this.isProcessing = true;
+        const { data } = await adminAPI.deleteTweet({ tweetId });
+        // STEP 4: 若請求過程有錯，則進到錯誤處理
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.$emit('after-delete-tweet', tweetId)
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
+      }
+    },
+  },
 };
 </script>
 
 <style lang="sass" scoped>
-
 .tweet
   display: flex
   position: relative
@@ -63,6 +84,7 @@ export default {
     height: 15px
     right: 19.5px
     top: 19.5px
+    cursor: pointer
 
 p
   margin: 0

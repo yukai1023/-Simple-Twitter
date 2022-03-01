@@ -12,6 +12,7 @@
           v-for="tweet in tweets"
           :key="tweet.id"
           :initial-tweet="tweet"
+          @after-delete-tweet="afterDeleteTweet"
         />
       </div>
     </div>
@@ -46,6 +47,11 @@ export default {
       } catch (error) {
         console.log("error");
       }
+    },
+    afterDeleteTweet(tweetId) {
+      this.tweets = this.tweets.filter(
+        (tweet) => tweet.id !== tweetId
+      );
     },
   },
 };

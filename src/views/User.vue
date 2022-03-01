@@ -12,17 +12,36 @@
       <div>
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link">推文</a>
+            <a @click="tweetChange" class="nav-link">推文</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link">推文與回覆</a>
+            <a @click="replyChange" class="nav-link">推文與回覆</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link">喜歡的內容</a>
+            <a @click="likeChange" class="nav-link">喜歡的內容</a>
           </li>
         </ul>
       </div>
-      <UserTweet />
+      <div class="TimeLine">
+        <UserTweet
+          v-show="UserTweet"
+          v-for="tweet in tweets"
+          :key="tweet.id"
+          :initial-tweet="tweet"
+        />
+        <UserRepliedTweet
+          v-show="UserRepliedTweet"
+          v-for="repliedTweet in repliedTweets"
+          :key="'reply' + repliedTweet.id"
+          :initial-replied="repliedTweet"
+        />
+        <UserLike
+          v-show="UserLike"
+          v-for="like in likes"
+          :key="'like' + like.id"
+          :initial-like="like"
+        />
+      </div>
     </div>
     <!--右側熱門用戶-->
     <div class="PopularUser">
@@ -37,25 +56,42 @@ import NavBar from "./../components/NavBar";
 import TweetModal from "./../components/TweetModal";
 import UserProfile from "./../components/UserProfile";
 import UserTweet from "./../components/UserTweet";
+import UserLike from "./../components/UserLike";
+import UserRepliedTweet from "./../components/UserRepliedTweet";
 import PopularUser from "./../components/PopularUser";
 import UserEditModal from "./../components/UserEditModal";
 import userAPI from "./../apis/users";
+import { mapState } from "vuex";
 export default {
   components: {
     NavBar,
     TweetModal,
     UserProfile,
     UserTweet,
+    UserLike,
     PopularUser,
+    UserRepliedTweet,
     UserEditModal,
   },
   data() {
     return {
       users: [],
+      tweets: [],
+      repliedTweets: [],
+      likes: [],
+      UserTweet: true,
+      UserRepliedTweet: false,
+      UserLike: false,
     };
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
   created() {
     this.fetchUsers();
+    this.fetchUserTweets();
+    this.fetchUserRepliedTweets();
+    this.fetchUserLikes();
   },
   methods: {
     async fetchUsers() {
@@ -64,10 +100,65 @@ export default {
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
+        console.log("getUser");
         this.users = response.data.data.users;
       } catch (error) {
         console.log("error");
       }
+    },
+    async fetchUserTweets() {
+      try {
+        const response = await userAPI.getUserTweets({
+          userId: this.currentUser.id,
+        });
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.tweets = response.data.data.tweets;
+      } catch (error) {
+        console.log("error");
+      }
+    },
+    async fetchUserRepliedTweets() {
+      try {
+        const response = await userAPI.getUserRepliedTweets({
+          userId: this.currentUser.id,
+        });
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.repliedTweets = response.data.data.replies;
+      } catch (error) {
+        console.log("error");
+      }
+    },
+    async fetchUserLikes() {
+      try {
+        const response = await userAPI.getUserLikes({
+          userId: this.currentUser.id,
+        });
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.likes = response.data.data.tweets;
+      } catch (error) {
+        console.log("error");
+      }
+    },
+    tweetChange() {
+      this.UserTweet = true;
+      this.UserRepliedTweet = false;
+      this.UserLike = false;
+    },
+    replyChange() {
+      this.UserTweet = false;
+      this.UserRepliedTweet = true;
+      this.UserLike = false;
+    },
+    likeChange() {
+      this.UserTweet = false;
+      this.UserRepliedTweet = false;
+      this.UserLike = true;
     },
   },
 };
@@ -94,6 +185,7 @@ export default {
       height: 45px
       color: #657786
       text-align: center
+      cursor: pointer
 
 .nav-tabs .nav-link:focus,
 .nav-tabs .nav-link:hover,
@@ -114,4 +206,8 @@ h3
   padding: 10px 0 0 15px
   font-size: 18px
   font-weight: bold
+
+.TimeLine
+  width: 600px
+  height: 100vh
 </style>

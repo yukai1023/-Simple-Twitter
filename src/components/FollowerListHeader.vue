@@ -7,7 +7,7 @@
       </label>
       <div class="account">
         <label class="name">{{ user.name }}</label>
-        <label class="tweets">25推文</label>
+        <label class="tweets">{{ user.tweetCount }}推文</label>
       </div>
     </div>
   </div>

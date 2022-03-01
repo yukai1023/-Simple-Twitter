@@ -9,26 +9,26 @@
       <div>
         <ul class="nav nav-tabs">
           <li class="nav-item">
+            <a class="nav-link at">跟隨者</a>
+          </li>
+          <li class="nav-item">
             <router-link
               v-if="typeof this.userId !== 'undefined'"
               class="nav-link"
               :to="{
-                name: 'followerList',
+                name: 'followingList',
                 params: { id: this.userId },
               }"
-              >跟隨者</router-link
+              >正在跟隨</router-link
             >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link at">正在跟隨</a>
           </li>
         </ul>
       </div>
       <div class="UserFollow">
-        <UserFollowing
-          v-for="following in followings"
-          :key="following.id"
-          :initial-following="following"
+        <UserFollower
+          v-for="follower in followers"
+          :key="follower.id"
+          :initial-follower="follower"
         />
       </div>
     </div>
@@ -44,26 +44,26 @@
 import NavBar from "../components/NavBar";
 import PopularUser from "../components/PopularUser";
 import FollowerListHeader from "../components/FollowerListHeader";
-import UserFollowing from "../components/UserFollowing";
-import userAPI from "./../apis/users";
+import UserFollower from "../components/UserFollower";
+import userAPI from "../apis/users";
 export default {
   components: {
     NavBar,
     PopularUser,
     FollowerListHeader,
-    UserFollowing,
+    UserFollower,
   },
   data() {
     return {
       users: [],
-      followings: [],
+      followers: [],
       userId: "",
     };
   },
   created() {
     this.fetchPopularUsers();
     const { id: userId } = this.$route.params;
-    this.fetchFollowing(userId);
+    this.fetchFollower(userId);
     this.userId = this.$route.params.id;
   },
   methods: {
@@ -79,16 +79,16 @@ export default {
         console.log("error");
       }
     },
-    async fetchFollowing(userId) {
+    async fetchFollower(userId) {
       try {
-        const response = await userAPI.getFollowings({
+        const response = await userAPI.getFollowers({
           userId,
         });
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
         console.log("getFollowingUser");
-        this.followings = response.data.data.users;
+        this.followers = response.data.data.users;
       } catch (error) {
         console.log("error");
       }

@@ -18,7 +18,22 @@
       <div class="replyLike">
         <img class="replyIcon" src="../images/icon_reply.png" alt="" />
         <label>{{ initialTweet.replyCount }}</label>
-        <img class="likeIcon" src="../images/icon_like.png" alt="" />
+        <img
+          v-if="initialTweet.isLiked"
+          :disabled="isProcessing"
+          @click.stop.prevent="unLike(initialTweet.UserId)"
+          class="likeIcon click"
+          src="../images/icon_like_fill.png"
+          alt=""
+        />
+        <img
+          :disabled="isProcessing"
+          v-else
+          @click.stop.prevent="addLike(initialTweet.UserId)"
+          class="click"
+          src="../images/icon_like.png"
+          alt=""
+        />
         <label>{{ initialTweet.likeCount }}</label>
       </div>
     </div>
@@ -27,6 +42,7 @@
 
 <script>
 import moment from "moment";
+import userAPI from "./../apis/users";
 export default {
   props: {
     initialTweet: {
@@ -34,12 +50,53 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      isProcessing: false,
+    };
+  },
   filters: {
     fromNow(datetime) {
       if (!datetime) {
         return "-";
       }
       return moment(datetime).fromNow();
+    },
+  },
+  methods: {
+    async addLike(userId) {
+      try {
+        this.isProcessing = true;
+        const { data } = await userAPI.addLike({ userId });
+        // STEP 4: 若請求過程有錯，則進到錯誤處理
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.initialTweet = {
+          ...this.initialTweet,
+          isFollowing: true,
+        };
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
+      }
+    },
+    async unLike(userId) {
+      try {
+        this.isProcessing = true;
+        const { data } = await userAPI.unLike({ userId });
+        // STEP 4: 若請求過程有錯，則進到錯誤處理
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.initialTweet = {
+          ...this.initialTweet,
+          isFollowing: false,
+        };
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
+      }
     },
   },
 };
@@ -80,9 +137,15 @@ export default {
     font-size: 13px
     line-height: 13px
     color: #657786
+    align-items: center
     .replyIcon
     > label
       margin-right: 50px
+    .likeIcon
+      Width: 20.1px
+      Height: 18.91px
+    .click
+      cursor: pointer
   img
     width: 15px
     height: 15px

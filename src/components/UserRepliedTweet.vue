@@ -10,16 +10,14 @@
         <span>・</span>
         <label class="time">{{ tweet.createdAt | fromNow }}</label>
       </div>
+      <div class="replyTo">
+        <span>回覆給 </span>
+        <span class="user">@apple</span>
+      </div>
       <div class="article">
         <p>
-          {{ tweet.description }}
+          {{ tweet.comment }}
         </p>
-      </div>
-      <div class="replyLike">
-        <img class="replyIcon" src="../images/icon_reply.png" alt="" />
-        <label>{{ tweet.replyCount }}</label>
-        <img class="likeIcon" src="../images/icon_like.png" alt="" />
-        <label>{{ tweet.likeCount }}</label>
       </div>
     </div>
   </div>
@@ -29,7 +27,7 @@
 import moment from "moment";
 export default {
   props: {
-    initialTweet: {
+    initialReplied: {
       type: Object,
       required: true,
     },
@@ -44,18 +42,13 @@ export default {
   },
   data() {
     return {
-      tweet: this.initialTweet,
+      tweet: this.initialReplied,
     };
   },
 };
 </script>
 
 <style lang="sass" scoped>
-.TimeLine
-  width: 600px
-  height: 100vh
-  border-left: 1px solid #E6ECF0
-  border-right: 1px solid #E6ECF0
 
 .Usertweet
   display: flex
@@ -99,5 +92,15 @@ export default {
     width: 15px
     height: 15px
     margin-right: 10px
+
+.replyTo
+  font-size: 13px
+  line-height: 13px
+  color: #657786
+  .user
+    color: #ff6600
+
+p
+  margin: 0px
 </style>
 

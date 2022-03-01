@@ -6,8 +6,8 @@
         <button type="button" @click="$router.back()" id="return-btn"></button>
       </label>
       <div class="account">
-        <label class="name">Karina</label>
-        <label class="tweets">25推文</label>
+        <label class="name">{{ user.name }}</label>
+        <label class="tweets">{{ user.tweetCount }}推文</label>
       </div>
     </div>
 
@@ -31,12 +31,18 @@
         </p>
         <div class="follow">
           <router-link
+            v-if="typeof user.id !== 'undefined'"
             class="number"
             :to="{ name: 'followingList', params: { id: user.id } }"
             >{{ user.following }} 個</router-link
           >
           <span class="following">跟隨中</span>
-          <span class="number">{{ user.followers }} 位</span>
+          <router-link
+            v-if="typeof user.id !== 'undefined'"
+            class="number"
+            :to="{ name: 'followerList', params: { id: user.id } }"
+            >{{ user.followers }} 位</router-link
+          >
           <span class="follower">跟隨者</span>
         </div>
       </div>
@@ -56,17 +62,12 @@ export default {
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
-  watch: {
-    user() {
-      this.fetchUsers();
-    },
-  },
   created() {
     this.fetchUsers();
   },
   methods: {
     async fetchUsers() {
-      try { 
+      try {
         const response = await userAPI.getUser({ userId: this.currentUser.id });
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
@@ -108,6 +109,7 @@ export default {
       line-height: 19px
 
 .profile
+  width: 598px
   border-left: 1px solid #e6ecf0
   border-right: 1px solid #e6ecf0
   .photo
@@ -153,7 +155,7 @@ export default {
       padding-top: 10px
       font-size: 14px
       line-height: 20px
-      width: 600px
+      width: 592px
     .follow
       padding-top: 10px
       font-size: 14px

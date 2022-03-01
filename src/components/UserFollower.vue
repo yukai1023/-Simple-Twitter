@@ -1,26 +1,26 @@
 <template>
   <div class="following">
     <div class="UserPhoto">
-      <img :src="following.avatar" alt="" />
+      <img :src="follower.avatar" alt="" />
     </div>
     <div class="TweetsContent">
       <div class="TweetsContent-top">
         <div class="UserAccount">
-          <label class="name">{{ following.name }}</label>
-          <label class="account">@{{ following.account }}</label>
+          <label class="name">{{ follower.name }}</label>
+          <label class="account">@{{ follower.account }}</label>
         </div>
         <div class="btn">
           <button
-            v-if="following.isFollowed"
+            v-if="follower.isFollowed"
             class="followingBtn"
-            @click.stop.prevent="unFollow(following.id)"
+            @click.stop.prevent="unFollow(follower.id)"
             :disabled="isProcessing"
           >
             正在跟隨
           </button>
           <button
             v-else
-            @click.stop.prevent="addFollow(following.id)"
+            @click.stop.prevent="addFollow(follower.id)"
             :disabled="isProcessing"
           >
             跟隨
@@ -29,7 +29,7 @@
       </div>
       <div class="article">
         <p>
-          {{ following.introduction }}
+          {{ follower.introduction }}
         </p>
       </div>
     </div>
@@ -37,17 +37,17 @@
 </template>
 
 <script>
-import userAPI from "./../apis/users";
+import userAPI from "../apis/users";
 export default {
   props: {
-    initialFollowing: {
+    initialFollower: {
       type: Object,
       required: true,
     },
   },
   data() {
     return {
-      following: this.initialFollowing,
+      follower: this.initialFollower,
       isProcessing: false,
     };
   },
@@ -60,8 +60,8 @@ export default {
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-        this.following = {
-          ...this.following,
+        this.follower = {
+          ...this.follower,
           isFollowed: true,
         };
         this.isProcessing = false;
@@ -77,8 +77,8 @@ export default {
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-        this.following = {
-          ...this.following,
+        this.follower = {
+          ...this.follower,
           isFollowed: false,
         };
         this.isProcessing = false;

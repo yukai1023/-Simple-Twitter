@@ -3,7 +3,7 @@ import { apiHelper } from './../utils/helpers'
 
 export default {
   getCurrentUser () {
-    return apiHelper.get('/get_current_user')
+    return apiHelper.get('/users/current')
   },
   getPopular () {
     return apiHelper.get('/users/popular')
@@ -17,8 +17,20 @@ export default {
   getUser ({ userId }) {
     return apiHelper.get(`/users/${userId}`)
   },
+  getUserTweets ({ userId }) {
+    return apiHelper.get(`/users/${userId}/tweets`)
+  },
+  getUserRepliedTweets ({ userId }) {
+    return apiHelper.get(`/users/${userId}/replied_tweets`)
+  },
+  getUserLikes ({ userId }) {
+    return apiHelper.get(`/users/${userId}/likes`)
+  },
   getFollowings ({ userId }) {
     return apiHelper.get(`/users/${userId}/followings`)
+  },
+  getFollowers ({ userId }) {
+    return apiHelper.get(`/users/${userId}/followers`)
   },
   addFollow ({ id: userId }) {
     return apiHelper.post('/followships', { id: userId })
@@ -26,19 +38,10 @@ export default {
   unFollow ({ userId }) {
     return apiHelper.delete(`/followships/${userId}`)
   },
-  addLike ({ restaurantId }) {
-    return apiHelper.post(`/like/${restaurantId}`, null)
+  addLike ({ userId }) {
+    return apiHelper.post(`/tweets/${userId}/like`)
   },
-  deleteLike ({ restaurantId }) {
-    return apiHelper.delete(`/like/${restaurantId}`)
-  },
-  getTopUsers () {
-    return apiHelper.get('/users/top')
-  },
-  addFollowing ({ userId }) {
-    return apiHelper.post(`/following/${userId}`, null)
-  },
-  deleteFollowing ({ userId }) {
-    return apiHelper.delete(`/following/${userId}`)
+  unLike ({ userId }) {
+    return apiHelper.post(`/tweets/${userId}/unlike`)
   }
 }
