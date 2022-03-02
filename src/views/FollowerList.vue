@@ -3,7 +3,7 @@
     <!--左側導覽列-->
     <NavBar />
     <!-- 中上 -->
-    <div clas="main">
+    <div class="main">
       <FollowerListHeader />
       <!-- 中下 -->
       <div>
@@ -104,11 +104,13 @@ export default {
     width: 600px
     display: flex
     flex-direction: column
+    margin-left: 378px
+    border-left: 1px solid #e6ecf0
+    border-right: 1px solid #e6ecf0
 
 .nav-tabs
   padding-top: 10px
-  border-left: 1px solid #e6ecf0
-  border-right: 1px solid #e6ecf0
+
   .nav-item
     width: 130px
     .nav-link
@@ -136,13 +138,11 @@ export default {
   height: 756px
   background: #F5F8FA
   border-radius: 14px
+  position: fixed
+  right: 10%
 
 h3
   padding: 10px 0 0 15px
   font-size: 18px
   font-weight: bold
-
-.UserFollow
-  border-left: 1px solid #E6ECF0
-  border-right: 1px solid #E6ECF0
 </style>

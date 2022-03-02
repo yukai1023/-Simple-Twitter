@@ -25,6 +25,11 @@ const routes = [
     component: () => import('../views/User.vue')
   },
   {
+    path: '/user/replyList/:id',
+    name: 'replyList',
+    component: () => import('../views/ReplyList.vue')
+  },
+  {
     path: '/user/followingList/:id',
     name: 'followingList',
     component: () => import('../views/FollowingList.vue')

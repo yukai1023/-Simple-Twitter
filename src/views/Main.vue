@@ -13,7 +13,9 @@
           v-for="tweet in tweets"
           :key="tweet.id"
           :initial-tweet="tweet"
+          @reply-tweet-data="replyTweetData"
         />
+        <ReplyModal :initial-data="replyTweet" :initial-user="user" />
       </div>
     </div>
     <!--右側熱門用戶-->
@@ -28,10 +30,11 @@
 import NavBar from "./../components/NavBar";
 import SendTweet from "./../components/SendTweet";
 import TweetModal from "./../components/TweetModal";
+import ReplyModal from "./../components/ReplyModal";
 import TimeLine from "./../components/TimeLine";
 import PopularUser from "./../components/PopularUser";
 import userAPI from "./../apis/users";
-
+import { mapState } from "vuex";
 export default {
   components: {
     NavBar,
@@ -39,16 +42,24 @@ export default {
     TweetModal,
     TimeLine,
     PopularUser,
+    ReplyModal,
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
   data() {
     return {
       tweets: [],
       users: [],
+      user: [],
+      replyTweet: [],
     };
   },
   created() {
     this.fetchTweets();
-    this.fetchUsers();
+    this.fetchPopularUsers();
+    this.fetchUser();
+    console.log(this.replyTweet);
   },
   methods: {
     async fetchTweets() {
@@ -57,13 +68,13 @@ export default {
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
-        console.log("getTweets");
+        console.log(response);
         this.tweets = response.data.data.tweets;
       } catch (error) {
         console.log("error");
       }
     },
-    async fetchUsers() {
+    async fetchPopularUsers() {
       try {
         const response = await userAPI.getPopular();
         if (response.statusText !== "OK") {
@@ -74,6 +85,20 @@ export default {
       } catch (error) {
         console.log("error");
       }
+    },
+    async fetchUser() {
+      try {
+        const response = await userAPI.getUser({ userId: this.currentUser.id });
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.user = response.data.data.user;
+      } catch (error) {
+        console.log("error");
+      }
+    },
+    replyTweetData(tweet) {
+      this.replyTweet = tweet;
     },
   },
 };
@@ -86,7 +111,7 @@ export default {
 .main
   display: flex
   flex-direction: column
-
+  padding-left: 378px
 .TimeLine
   width: 600px
   height: 100vh
@@ -99,7 +124,8 @@ export default {
   height: 756px
   background: #F5F8FA
   border-radius: 14px
-
+  position: fixed
+  right: 10%
 h3
   padding: 10px 0 0 15px
   font-size: 18px

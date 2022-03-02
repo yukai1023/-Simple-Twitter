@@ -65,7 +65,7 @@
                 autofocus
               />
             </div>
-            <p>/50</p>
+            <p>{{ getUser ? user.name.length : "0" }}/50</p>
             <div class="form-introduce">
               <label class="account-font" for="introduction">自我介紹</label>
               <textarea
@@ -81,7 +81,7 @@
                 autofocus
               ></textarea>
             </div>
-            <p>/160</p>
+            <p>{{ getUser ? user.introduction.length : "0" }}/160</p>
           </div>
         </div>
       </div>
@@ -97,6 +97,7 @@ export default {
     return {
       user: [],
       isProcessing: false,
+      getUser: false,
     };
   },
   computed: {
@@ -113,33 +114,20 @@ export default {
           throw new Error(response.statusText);
         }
         this.user = response.data.data.user;
+        this.getUser = true;
       } catch (error) {
         console.log("error");
       }
     },
     imageChange(e) {
       const { files } = e.target;
-
-      if (files.length === 0) {
-        // 使用者沒有選擇上傳的檔案
-        this.currentUser.avatar = "";
-      } else {
-        // 否則產生預覽圖
-        const imageURL = window.URL.createObjectURL(files[0]);
-        this.user.avatar = imageURL;
-      }
+      const imageURL = window.URL.createObjectURL(files[0]);
+      this.user.avatar = imageURL;
     },
     backgroundChange(e) {
       const { files } = e.target;
-
-      if (files.length === 0) {
-        // 使用者沒有選擇上傳的檔案
-        this.currentUser.cover = "";
-      } else {
-        // 否則產生預覽圖
-        const backgroundURL = window.URL.createObjectURL(files[0]);
-        this.user.cover = backgroundURL;
-      }
+      const backgroundURL = window.URL.createObjectURL(files[0]);
+      this.user.cover = backgroundURL;
     },
     async handleSubmit(e) {
       try {

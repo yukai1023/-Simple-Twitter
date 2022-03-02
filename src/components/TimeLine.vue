@@ -1,40 +1,54 @@
 <template>
   <div class="Usertweet">
-    <div class="UserPhoto">
-      <img :src="initialTweet.User.avatar" alt="" />
+    <div @click="replyLink()" class="UserPhoto">
+      <img :src="tweet.User.avatar" alt="" />
     </div>
     <div class="TweetsContent">
-      <div class="UserAccount">
-        <label class="name">{{ initialTweet.User.name }}</label>
-        <label class="account">@{{ initialTweet.User.account }}</label>
+      <div class="UserAccount" @click="replyLink()">
+        <label class="name">{{ tweet.User.name }}</label>
+        <label class="account">@{{ tweet.User.account }}</label>
         <span>・</span>
-        <label class="time">{{ initialTweet.createdAt | fromNow }}</label>
+        <label class="time">{{ tweet.createdAt | fromNow }}</label>
       </div>
       <div class="article">
-        <p>
-          {{ initialTweet.description }}
-        </p>
+        <router-link
+          class="link"
+          id="replyLink"
+          :to="{
+            name: 'replyList',
+            params: { id: this.tweet.id },
+          }"
+        >
+          {{ tweet.description }}
+        </router-link>
       </div>
       <div class="replyLike">
-        <img class="replyIcon" src="../images/icon_reply.png" alt="" />
-        <label>{{ initialTweet.replyCount }}</label>
         <img
-          v-if="initialTweet.isLiked"
+          class="replyIcon click"
+          src="../images/icon_reply.png"
+          data-bs-toggle="modal"
+          data-bs-target="#reply-modal"
+          @click="replyTweetData(tweet)"
+          alt=""
+        />
+        <label>{{ tweet.replyCount }}</label>
+        <img
+          v-if="tweet.isLiked"
           :disabled="isProcessing"
-          @click.stop.prevent="unLike(initialTweet.UserId)"
+          @click.stop.prevent="unLike(tweet.id)"
           class="likeIcon click"
           src="../images/icon_like_fill.png"
           alt=""
         />
         <img
-          :disabled="isProcessing"
           v-else
-          @click.stop.prevent="addLike(initialTweet.UserId)"
+          :disabled="isProcessing"
+          @click.stop.prevent="addLike(tweet.id)"
           class="click"
           src="../images/icon_like.png"
           alt=""
         />
-        <label>{{ initialTweet.likeCount }}</label>
+        <label>{{ tweet.likeCount }}</label>
       </div>
     </div>
   </div>
@@ -52,6 +66,7 @@ export default {
   },
   data() {
     return {
+      tweet: this.initialTweet,
       isProcessing: false,
     };
   },
@@ -64,39 +79,44 @@ export default {
     },
   },
   methods: {
-    async addLike(userId) {
+    async addLike(tweetId) {
       try {
         this.isProcessing = true;
-        const { data } = await userAPI.addLike({ userId });
+        const { data } = await userAPI.addLike({ tweetId });
         // STEP 4: 若請求過程有錯，則進到錯誤處理
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-        this.initialTweet = {
-          ...this.initialTweet,
-          isFollowing: true,
+        this.tweet = {
+          ...this.tweet,
+          isLiked: true,
         };
+        this.tweet.likeCount = this.tweet.likeCount + 1;
         this.isProcessing = false;
       } catch (error) {
         this.isProcessing = false;
       }
     },
-    async unLike(userId) {
+    async unLike(tweetId) {
       try {
         this.isProcessing = true;
-        const { data } = await userAPI.unLike({ userId });
+        const { data } = await userAPI.unLike({ tweetId });
         // STEP 4: 若請求過程有錯，則進到錯誤處理
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-        this.initialTweet = {
-          ...this.initialTweet,
-          isFollowing: false,
+        this.tweet = {
+          ...this.tweet,
+          isLiked: false,
         };
+        this.tweet.likeCount = this.tweet.likeCount - 1;
         this.isProcessing = false;
       } catch (error) {
         this.isProcessing = false;
       }
+    },
+    replyLink() {
+      document.getElementById("replyLink").click();
     },
   },
 };
@@ -111,6 +131,7 @@ export default {
 .UserPhoto
   width: 50px
   height: 50px
+  cursor: pointer
   img
     width: 50px
     height: 50px
@@ -124,6 +145,8 @@ export default {
     font-size: 15px
     line-height: 22px
     color: #657786
+    label
+      cursor: pointer
     .name
       margin-right: 5px
       color: black
@@ -131,6 +154,10 @@ export default {
   .article
     font-size: 15px
     line-height: 22px
+    margin: 0 0 12px 0
+    .link
+      color: #1C1C1C
+      text-decoration: none
   .replyLike
     display: flex
     padding-right: 50px

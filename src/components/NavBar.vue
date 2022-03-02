@@ -43,7 +43,7 @@ export default {
   width: 210px
   height: 100
   margin: 0 100px 0 103px
-  position: relative
+  position: fixed
 
 .logo
   width: 30px
@@ -63,7 +63,7 @@ div
 
 .logout
   position: absolute
-  bottom: 17px
+  bottom: -130%
 .labelItem
   font-weight: bold
   font-size: 18px

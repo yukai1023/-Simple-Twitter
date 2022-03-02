@@ -49,8 +49,6 @@ export default {
   height: 55px
   display: flex
   align-items: center
-  border-left: 1px solid #e6ecf0
-  border-right: 1px solid #e6ecf0
   .return
     cursor: pointer
     img

@@ -18,7 +18,22 @@
       <div class="replyLike">
         <img class="replyIcon" src="../images/icon_reply.png" alt="" />
         <label>{{ tweet.replyCount }}</label>
-        <img class="likeIcon" src="../images/icon_like.png" alt="" />
+        <img
+          v-if="tweet.isLiked"
+          :disabled="isProcessing"
+          @click.stop.prevent="unLike(tweet.id)"
+          class="likeIcon click"
+          src="../images/icon_like_fill.png"
+          alt=""
+        />
+        <img
+          v-else
+          :disabled="isProcessing"
+          @click.stop.prevent="addLike(tweet.id)"
+          class="click"
+          src="../images/icon_like.png"
+          alt=""
+        />
         <label>{{ tweet.likeCount }}</label>
       </div>
     </div>
@@ -27,6 +42,7 @@
 
 <script>
 import moment from "moment";
+import userAPI from "./../apis/users";
 export default {
   props: {
     initialLike: {
@@ -45,7 +61,46 @@ export default {
   data() {
     return {
       tweet: this.initialLike,
+      isProcessing: false,
     };
+  },
+  methods: {
+    async addLike(tweetId) {
+      try {
+        this.isProcessing = true;
+        const { data } = await userAPI.addLike({ tweetId });
+        // STEP 4: 若請求過程有錯，則進到錯誤處理
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.tweet = {
+          ...this.tweet,
+          isLiked: true,
+        };
+        this.tweet.likeCount = this.tweet.likeCount + 1;
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
+      }
+    },
+    async unLike(tweetId) {
+      try {
+        this.isProcessing = true;
+        const { data } = await userAPI.unLike({ tweetId });
+        // STEP 4: 若請求過程有錯，則進到錯誤處理
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.tweet = {
+          ...this.tweet,
+          isLiked: false,
+        };
+        this.tweet.likeCount = this.tweet.likeCount - 1;
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
+      }
+    },
   },
 };
 </script>
@@ -92,9 +147,15 @@ export default {
     font-size: 13px
     line-height: 13px
     color: #657786
+    align-items: center
     .replyIcon
     > label
       margin-right: 50px
+    .likeIcon
+      Width: 20.1px
+      Height: 18.91px
+    .click
+      cursor: pointer
   img
     width: 15px
     height: 15px

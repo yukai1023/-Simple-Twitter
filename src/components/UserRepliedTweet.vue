@@ -12,7 +12,7 @@
       </div>
       <div class="replyTo">
         <span>回覆給 </span>
-        <span class="user">@apple</span>
+        <span class="user">@{{ tweet.replyTo }}</span>
       </div>
       <div class="article">
         <p>
@@ -49,7 +49,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-
 .Usertweet
   display: flex
   padding: 13px 10px 13px 15px
@@ -94,6 +93,7 @@ export default {
     margin-right: 10px
 
 .replyTo
+  padding: 5px 0
   font-size: 13px
   line-height: 13px
   color: #657786

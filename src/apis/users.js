@@ -38,10 +38,13 @@ export default {
   unFollow ({ userId }) {
     return apiHelper.delete(`/followships/${userId}`)
   },
-  addLike ({ userId }) {
-    return apiHelper.post(`/tweets/${userId}/like`)
+  addLike ({ tweetId }) {
+    return apiHelper.post(`/tweets/${tweetId}/like`)
   },
-  unLike ({ userId }) {
-    return apiHelper.post(`/tweets/${userId}/unlike`)
+  unLike ({ tweetId }) {
+    return apiHelper.post(`/tweets/${tweetId}/unlike`)
+  },
+  sendTweet ({ description }) {
+    return apiHelper.post('/tweets', { description })
   }
 }

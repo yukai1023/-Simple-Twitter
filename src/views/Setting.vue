@@ -5,7 +5,9 @@
     <!--推文模板-->
     <TweetModal />
     <!--右側帳號設定-->
-    <UserSetting />
+    <div class="main">
+      <UserSetting />
+    </div>
   </div>
 </template>
 
@@ -25,4 +27,8 @@ export default {
 <style lang="sass" scoped>
 .setting-container
   display: flex
+
+.main
+  padding-left: 378px
+  width: 100%
 </style>

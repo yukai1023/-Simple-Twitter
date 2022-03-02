@@ -1,25 +1,63 @@
 <template>
-  <div>
+  <form @submit.stop.prevent="handleSubmit(content)">
     <div class="SendTweet">
       <h3>首頁</h3>
       <div class="photo">
-        <img class="face" src="../images/coverPhoto.png" alt="" />
+        <img class="face" :src="avatar" alt="" />
         <textarea
+          name="description"
           id="data"
           class="form-control input"
           style="width: 520px; height: 60px"
           rows="7"
           cols="20"
+          v-model="content"
           placeholder="有什麼新鮮事？"
           required
           autofocus
         ></textarea>
-        <button class="btn">推文</button>
+        <button :disabled="isProcessing" type="submit">推文</button>
       </div>
     </div>
-  </div>
+  </form>
 </template>
+<script>
+import { mapState } from "vuex";
+import userAPI from "./../apis/users";
+export default {
+  data() {
+    return {
+      content: "",
+      avatar: "https://i.imgur.com/zYddUs8.png",
+      isProcessing: false,
+    };
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
+  },
+  created() {
+    this.avatar = this.currentUser.avatar;
+  },
+  methods: {
+    async handleSubmit(content) {
+      try {
+        this.isProcessing = true;
+        const { data } = await userAPI.sendTweet({
+          description: content,
+        });
 
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.content = "";
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
+      }
+    },
+  },
+};
+</script>
 <style lang="sass" scoped>
 .SendTweet
   width: 600px
@@ -46,7 +84,7 @@ h3
   line-height: 26px
   color: #9197a3
 
-.btn
+button
   position: absolute
   bottom: 10px
   right: 15px

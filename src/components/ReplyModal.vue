@@ -21,33 +21,53 @@
           <div class="TimeLine">
             <div class="Usertweet">
               <div class="UserPhoto">
-                <img src="../images/logo@2x.png" alt="" />
+                <img
+                  :src="[
+                    getData
+                      ? initialData.User.avatar
+                      : 'https://i.imgur.com/zYddUs8.png',
+                  ]"
+                />
                 <p class="line"></p>
               </div>
               <div class="TweetsContent">
                 <div class="UserAccount">
-                  <label class="name">Apple</label>
-                  <label class="account">@apple</label>
+                  <label class="name">{{
+                    getData ? initialData.User.name : ""
+                  }}</label>
+                  <label class="account"
+                    >@{{ getData ? initialData.User.account : "" }}</label
+                  >
                   <span>・</span>
-                  <label class="time">3 小時</label>
+                  <label class="time">{{
+                    initialData.createdAt | fromNow
+                  }}</label>
                 </div>
                 <div class="article">
                   <p class="content">
-                    Well, I will call you darlin' and everything will be
-                    okay,'Cause I know that I am yours and you are mine,Doesn't
-                    matter anyway,In the night, we'll take a walk, it's nothing
-                    funny,Just to talk.
+                    {{ getData ? initialData.description : "" }}
                   </p>
                   <div class="replyTo">
                     <span>回覆給 </span>
-                    <span class="user">@apple</span>
+                    <span class="user"
+                      >@{{ getData ? initialData.User.name : "" }}</span
+                    >
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="replyContainer">
-            <img class="face" src="../images/logo@2x.png" alt="" />
+            <div class="face">
+              <img
+                :src="[
+                  getData
+                    ? initialUser.avatar
+                    : 'https://i.imgur.com/zYddUs8.png',
+                ]"
+                alt=""
+              />
+            </div>
             <textarea
               id="data"
               class="form-control input"
@@ -68,6 +88,44 @@
   </div>
 </template>
 
+<script>
+import { mapState } from "vuex";
+import moment from "moment";
+export default {
+  props: {
+    initialData: {
+      type: [Array, Object],
+      required: true,
+    },
+    initialUser: {
+      type: [Array, Object],
+      required: true,
+    },
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
+  },
+  data() {
+    return {
+      isProcessing: false,
+      user: [],
+      getData: false,
+    };
+  },
+  beforeUpdate() {
+    this.getData = true;
+  },
+  filters: {
+    fromNow(datetime) {
+      if (!datetime) {
+        return "-";
+      }
+      return moment(datetime).fromNow();
+    },
+  },
+};
+</script>
+
 <style lang="sass" scoped>
 .btn-primary
   background: #ff6600
@@ -81,7 +139,7 @@
   display: flex
 
 .face
-  width: 50px
+  width: 60px
   height: 50px
   display: block
   object-fit: cover
@@ -125,16 +183,10 @@ textarea
 .UserPhoto
   width: 50px
   height: 50px
-  img
-    width: 50px
-    height: 50px
-    display: block
-    object-fit: cover
-    border-radius: 100px
   .line
     margin: 5px 0 0 0
     width: 50%
-    height: 80px
+    height: 60px
     border-right: solid #CCD6DD 3px
 .TweetsContent
   padding-left: 10px
@@ -157,4 +209,11 @@ textarea
   margin: 5px 0 19px 0
   font-size: 15px
   line-height: 22px
+
+img
+  width: 50px
+  height: 50px
+  display: block
+  object-fit: cover
+  border-radius: 100px
 </style>

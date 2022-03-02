@@ -6,42 +6,8 @@
     <TweetModal />
     <div class="main">
       <!--中間個人資料-->
-      <UserProfile />
+      <ReplyTweet />
       <!--編輯個人資料模板-->
-      <UserEditModal />
-      <div>
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a @click="tweetChange" class="nav-link">推文</a>
-          </li>
-          <li class="nav-item">
-            <a @click="replyChange" class="nav-link">推文與回覆</a>
-          </li>
-          <li class="nav-item">
-            <a @click="likeChange" class="nav-link">喜歡的內容</a>
-          </li>
-        </ul>
-      </div>
-      <div class="TimeLine">
-        <UserTweet
-          v-show="UserTweet"
-          v-for="tweet in tweets"
-          :key="tweet.id"
-          :initial-tweet="tweet"
-        />
-        <UserRepliedTweet
-          v-show="UserRepliedTweet"
-          v-for="repliedTweet in repliedTweets"
-          :key="'reply' + repliedTweet.id"
-          :initial-replied="repliedTweet"
-        />
-        <UserLike
-          v-show="UserLike"
-          v-for="like in likes"
-          :key="'like' + like.id"
-          :initial-like="like"
-        />
-      </div>
     </div>
     <!--右側熱門用戶-->
     <div class="PopularUser">
@@ -54,24 +20,16 @@
 <script>
 import NavBar from "./../components/NavBar";
 import TweetModal from "./../components/TweetModal";
-import UserProfile from "./../components/UserProfile";
-import UserTweet from "./../components/UserTweet";
-import UserLike from "./../components/UserLike";
-import UserRepliedTweet from "./../components/UserRepliedTweet";
+import ReplyTweet from "./../components/ReplyTweet";
 import PopularUser from "./../components/PopularUser";
-import UserEditModal from "./../components/UserEditModal";
-import userAPI from "./../apis/users";
+import userAPI from "../apis/users";
 import { mapState } from "vuex";
 export default {
   components: {
     NavBar,
     TweetModal,
-    UserProfile,
-    UserTweet,
-    UserLike,
     PopularUser,
-    UserRepliedTweet,
-    UserEditModal,
+    ReplyTweet,
   },
   data() {
     return {
@@ -145,21 +103,6 @@ export default {
         console.log("error");
       }
     },
-    tweetChange() {
-      this.UserTweet = true;
-      this.UserRepliedTweet = false;
-      this.UserLike = false;
-    },
-    replyChange() {
-      this.UserTweet = false;
-      this.UserRepliedTweet = true;
-      this.UserLike = false;
-    },
-    likeChange() {
-      this.UserTweet = false;
-      this.UserRepliedTweet = false;
-      this.UserLike = true;
-    },
   },
 };
 </script>
@@ -171,11 +114,12 @@ export default {
 .main
   display: flex
   flex-direction: column
-  padding-left: 378px
-.nav-tabs
-  padding-top: 25px
+  margin-left: 378px
   border-left: 1px solid #e6ecf0
   border-right: 1px solid #e6ecf0
+  width: 600px
+.nav-tabs
+  padding-top: 25px
   .nav-item
     width: 130px
     .nav-link
@@ -201,8 +145,6 @@ export default {
   height: 756px
   background: #F5F8FA
   border-radius: 14px
-  position: fixed
-  right: 10%
 
 h3
   padding: 10px 0 0 15px

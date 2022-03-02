@@ -48,9 +48,8 @@
 
 <style lang="sass" scoped>
 .userSetting
-  width: 73%
+  width: 100%
   border-left: 1px solid #E6ECF0
-
 .title
   h3
     font-weight: bold
