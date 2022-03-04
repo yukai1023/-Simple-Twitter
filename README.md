@@ -48,5 +48,8 @@ npm run serve
 ```
 Listening on http://localhost:8080
 ```
+## 使用套件
+- moment
+- sweetalert2
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
