@@ -6,7 +6,7 @@
     <TweetModal />
     <!--右側帳號設定-->
     <div class="main">
-      <UserSetting />
+      <UserSetting :initial-user="currentUser" />
     </div>
   </div>
 </template>
@@ -15,11 +15,15 @@
 import NavBar from "./../components/NavBar";
 import UserSetting from "./../components/UserSetting";
 import TweetModal from "./../components/TweetModal";
+import { mapState } from "vuex";
 export default {
   components: {
     NavBar,
     UserSetting,
     TweetModal,
+  },
+  computed: {
+    ...mapState(["currentUser"]),
   },
 };
 </script>

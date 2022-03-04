@@ -11,6 +11,12 @@ export default {
   getTweets () {
     return apiHelper.get('/tweets')
   },
+  getTweet ({ tweetId }) {
+    return apiHelper.get(`/tweets/${tweetId}`)
+  },
+  getTweetReplies ({ tweetId }) {
+    return apiHelper.get(`/tweets/${tweetId}/replies`)
+  },
   getEditModal ({ userId, formData }) {
     return apiHelper.put(`/users/${userId}`, formData)
   },
@@ -46,5 +52,8 @@ export default {
   },
   sendTweet ({ description }) {
     return apiHelper.post('/tweets', { description })
+  },
+  replyTweet ({ tweetId, comment }) {
+    return apiHelper.post(`/tweets/${tweetId}/replies`, { comment })
   }
 }

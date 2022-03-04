@@ -35,7 +35,6 @@ export default {
     async fetchUsers() {
       try {
         const response = await adminAPI.getUsers();
-        console.log(response)
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
@@ -54,7 +53,7 @@ export default {
 
 .list-container
   width: 100%
-
+  padding-left: 378px
 .title
   display: flex
   height: 55px

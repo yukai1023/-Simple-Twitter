@@ -1,11 +1,29 @@
 <template>
   <div class="card">
     <div class="photo">
-      <img :src="user.avatar" alt="" />
+      <router-link
+        v-if="typeof this.user.id !== 'undefined'"
+        class="link"
+        :to="{
+          name: 'OtherUser',
+          params: { id: this.user.id },
+        }"
+      >
+        <img :src="user.avatar" alt="" />
+      </router-link>
     </div>
     <div class="UserAccount">
-      <label class="name">{{ user.name }}</label>
-      <label class="account">@{{ user.account }}</label>
+      <router-link
+        v-if="typeof this.user.id !== 'undefined'"
+        class="name"
+        :to="{
+          name: 'OtherUser',
+          params: { id: this.user.id },
+        }"
+      >
+        {{ user.name | ellipsis }}
+      </router-link>
+      <label class="account">@{{ user.account | ellipsis }}</label>
     </div>
     <div>
       <button
@@ -29,6 +47,7 @@
 
 <script>
 import userAPI from "./../apis/users";
+import { Toast } from "./../utils/helpers";
 export default {
   props: {
     initialUser: {
@@ -41,6 +60,15 @@ export default {
       user: this.initialUser,
       isProcessing: false,
     };
+  },
+  filters: {
+    ellipsis(value) {
+      if (!value) return "";
+      if (value.length > 15) {
+        return value.slice(0, 15) + "...";
+      }
+      return value;
+    },
   },
   methods: {
     async addFollow(userId) {
@@ -58,6 +86,10 @@ export default {
         this.isProcessing = false;
       } catch (error) {
         this.isProcessing = false;
+        Toast.fire({
+          icon: "error",
+          title: "請稍後再試",
+        });
       }
     },
     async unFollow(userId) {
@@ -75,6 +107,10 @@ export default {
         this.isProcessing = false;
       } catch (error) {
         this.isProcessing = false;
+        Toast.fire({
+          icon: "error",
+          title: "請稍後再試",
+        });
       }
     },
   },
@@ -101,6 +137,8 @@ export default {
 .photo
   width: 50px
   height: 50px
+  img
+    cursor: pointer
 
 .UserAccount
   padding-left: 10px
@@ -110,6 +148,9 @@ export default {
     margin-bottom: 0
   .name
     font-weight: bold
+    cursor: pointer
+    text-decoration: none
+    color: black
   .account
     color: #657786
 

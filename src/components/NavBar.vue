@@ -4,15 +4,33 @@
       <img src="../images/logo@2x.png" alt="logo" class="logo" />
     </div>
     <div class="navItem index">
-      <img src="../images/home.png" alt="" />
+      <img
+        v-if="this.$route.name === 'main'"
+        class="icon"
+        src="../images/atHome.png"
+        alt=""
+      />
+      <img v-else src="../images/home.png" alt="" />
       <router-link class="labelItem" to="/main"> 首頁 </router-link>
     </div>
     <div class="navItem userProfile">
-      <img src="../images/profile.png" alt="" />
+      <img
+        v-if="this.$route.name === 'user'"
+        class="icon"
+        src="../images/atProfile.png"
+        alt=""
+      />
+      <img v-else src="../images/profile.png" alt="" />
       <router-link class="labelItem" to="/user"> 個人資料 </router-link>
     </div>
     <div class="navItem UserSetting">
-      <img src="../images/setting.png" alt="" />
+      <img
+        v-if="this.$route.name === 'setting'"
+        class="icon"
+        src="../images/atSetting.png"
+        alt=""
+      />
+      <img v-else src="../images/setting.png" alt="" />
       <router-link class="labelItem" to="/setting"> 設定 </router-link>
     </div>
     <div class="navItem newTweet">
@@ -29,6 +47,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      at: "home",
+    };
+  },
   methods: {
     logout() {
       this.$store.commit("revokeAuthentication");
@@ -58,8 +81,6 @@ div
     img
       width: 24px
       height: 24px
-    .at
-      color: #FF6600
 
 .logout
   position: absolute
@@ -79,4 +100,7 @@ button
   font-size: 18px
   color: #fff
   background: #FF6600
+
+.router-link-exact-active
+  color: #FF6600
 </style>

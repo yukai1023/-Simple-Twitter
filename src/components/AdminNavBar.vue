@@ -4,11 +4,23 @@
       <img src="../images/logo@2x.png" alt="logo" class="logo" />
     </div>
     <div class="navItem index">
-      <img src="../images/home.png" alt="" />
+      <img
+        v-if="this.$route.name === 'adminMain'"
+        class="icon"
+        src="../images/atHome.png"
+        alt=""
+      />
+      <img v-else src="../images/home.png" alt="" />
       <router-link class="labelItem" to="/admin/main"> 推文清單 </router-link>
     </div>
     <div class="navItem userProfile">
-      <img src="../images/profile.png" alt="" />
+      <img
+        v-if="this.$route.name === 'adminUserList'"
+        class="icon"
+        src="../images/atProfile.png"
+        alt=""
+      />
+      <img v-else src="../images/profile.png" alt="" />
       <router-link class="labelItem" to="/admin/userList">
         使用者資料
       </router-link>
@@ -37,7 +49,7 @@ export default {
   width: 210px
   height: 100vh
   margin: 0 100px 0 103px
-  position: relative
+  position: fixed
 
 .logo
   width: 30px
@@ -55,7 +67,7 @@ div
 
 .logout
   position: absolute
-  bottom: 17px
+  bottom: 20px
 
 .labelItem
   font-weight: bold
@@ -72,4 +84,7 @@ button
   font-size: 18px
   color: #fff
   background: #FF6600
+
+.router-link-exact-active
+  color: #FF6600
 </style>

@@ -5,6 +5,11 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/',
+    name: 'root',
+    redirect: '/login'
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('../views/Login.vue')
@@ -23,6 +28,11 @@ const routes = [
     path: '/user',
     name: 'user',
     component: () => import('../views/User.vue')
+  },
+  {
+    path: '/user/:id',
+    name: 'OtherUser',
+    component: () => import('../views/OtherUser.vue')
   },
   {
     path: '/user/replyList/:id',
@@ -91,5 +101,9 @@ router.beforeEach(async (to, from, next) => {
     return
   }
   next()
+})
+
+router.afterEach(() => {
+  window.scrollTo(0, 0)
 })
 export default router

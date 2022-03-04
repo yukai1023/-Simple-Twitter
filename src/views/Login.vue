@@ -16,7 +16,6 @@
           class="form-control"
           autocomplete="username"
           required
-          autofocus
         />
       </div>
 
@@ -47,6 +46,7 @@
 
 <script>
 import authorizationAPI from "./../apis/authorization";
+import { Toast } from "./../utils/helpers";
 export default {
   data() {
     return {
@@ -69,9 +69,16 @@ export default {
         this.$store.commit("setCurrentUser", data.data.user);
         localStorage.setItem("token", data.data.token);
         this.$router.push("/main");
+        Toast.fire({
+          icon: "success",
+          title: "成功登入帳號！",
+        });
       } catch (error) {
         this.password = "";
-        console.log("error");
+        Toast.fire({
+          icon: "error",
+          title: "請確認您輸入了正確的帳號密碼",
+        });
       }
     },
   },
@@ -104,6 +111,9 @@ export default {
   height: 52px
   text-align: left
   box-shadow: inset 0 -2px 0 rgba(101, 119, 134, 1)
+  &:hover,
+  &:focus
+    box-shadow: inset 0 -2px 0 rgba(80, 181, 255, 1)
   .account-font
     color: #657786
     font-weight: 500

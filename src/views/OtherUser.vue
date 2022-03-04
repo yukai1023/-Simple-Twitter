@@ -9,37 +9,30 @@
     <template v-else>
       <div class="main">
         <!--中間個人資料-->
-        <UserProfile />
-        <!--回覆模板-->
-        <ReplyModal :initial-data="replyTweet" :initial-user="user" />
-        <!--編輯個人資料模板-->
-        <UserEditModal />
+        <OtherUserProfile :initial-user="user" />
         <div>
           <ul class="nav nav-tabs">
             <li class="nav-item">
               <a
-                id="navTweet"
                 @click="tweetChange"
-                :class="{ active: active === 'tweet' }"
                 class="nav-link"
+                :class="{ active: active === 'tweet' }"
                 >推文</a
               >
             </li>
             <li class="nav-item">
               <a
-                id="navReply"
                 @click="replyChange"
-                class="nav-link"
                 :class="{ active: active === 'reply' }"
+                class="nav-link"
                 >推文與回覆</a
               >
             </li>
             <li class="nav-item">
               <a
-                id="navLike"
                 @click="likeChange"
-                class="nav-link"
                 :class="{ active: active === 'like' }"
+                class="nav-link"
                 >喜歡的內容</a
               >
             </li>
@@ -51,7 +44,6 @@
             v-for="tweet in tweets"
             :key="tweet.id"
             :initial-tweet="tweet"
-            @reply-tweet-data="replyTweetData"
           />
           <div
             class="substitute"
@@ -76,7 +68,6 @@
             v-for="like in likes"
             :key="'like' + like.id"
             :initial-like="like"
-            @reply-tweet-data="replyTweetData"
           />
           <div class="substitute" v-if="likes.length < 1 && UserLike === true">
             目前尚無喜歡的內容
@@ -99,36 +90,31 @@
 <script>
 import NavBar from "./../components/NavBar";
 import TweetModal from "./../components/TweetModal";
-import UserProfile from "./../components/UserProfile";
+import OtherUserProfile from "./../components/OtherUserProfile";
 import UserTweet from "./../components/UserTweet";
 import UserLike from "./../components/UserLike";
 import UserRepliedTweet from "./../components/UserRepliedTweet";
 import PopularUser from "./../components/PopularUser";
-import UserEditModal from "./../components/UserEditModal";
-import ReplyModal from "./../components/ReplyModal";
-import Spinner from "./../components/Spinner";
-import userAPI from "./../apis/users";
+import userAPI from "../apis/users";
 import { mapState } from "vuex";
+import Spinner from "./../components/Spinner";
 export default {
   components: {
     NavBar,
     TweetModal,
-    UserProfile,
+    OtherUserProfile,
     UserTweet,
     UserLike,
     PopularUser,
     UserRepliedTweet,
-    UserEditModal,
-    ReplyModal,
     Spinner,
   },
   data() {
     return {
+      user: [],
       users: [],
       tweets: [],
       repliedTweets: [],
-      replyTweet: [],
-      user: [],
       likes: [],
       UserTweet: true,
       UserRepliedTweet: false,
@@ -138,19 +124,23 @@ export default {
     };
   },
   computed: {
-    ...mapState(["currentUser", "tweetCreate"]),
-  },
-  watch: {
-    tweetCreate(newValue) {
-      this.createTweet(newValue);
-    },
+    ...mapState(["currentUser"]),
   },
   created() {
+    const { id: userId } = this.$route.params;
     this.fetchUsers();
-    this.fetchUserTweets();
-    this.fetchUserRepliedTweets();
-    this.fetchUserLikes();
-    this.fetchUser();
+    this.fetchUser(userId);
+    this.fetchUserTweets(userId);
+    this.fetchUserRepliedTweets(userId);
+    this.fetchUserLikes(userId);
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { id: userId } = to.params;
+    this.fetchUser(userId);
+    this.fetchUserTweets(userId);
+    this.fetchUserRepliedTweets(userId);
+    this.fetchUserLikes(userId);
+    next();
   },
   methods: {
     async fetchUsers() {
@@ -164,9 +154,11 @@ export default {
         console.log("error");
       }
     },
-    async fetchUser() {
+    async fetchUser(userId) {
       try {
-        const response = await userAPI.getUser({ userId: this.currentUser.id });
+        const response = await userAPI.getUser({
+          userId,
+        });
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
@@ -177,10 +169,10 @@ export default {
         console.log("error");
       }
     },
-    async fetchUserTweets() {
+    async fetchUserTweets(userId) {
       try {
         const response = await userAPI.getUserTweets({
-          userId: this.currentUser.id,
+          userId,
         });
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
@@ -190,10 +182,10 @@ export default {
         console.log("error");
       }
     },
-    async fetchUserRepliedTweets() {
+    async fetchUserRepliedTweets(userId) {
       try {
         const response = await userAPI.getUserRepliedTweets({
-          userId: this.currentUser.id,
+          userId,
         });
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
@@ -203,10 +195,10 @@ export default {
         console.log("error");
       }
     },
-    async fetchUserLikes() {
+    async fetchUserLikes(userId) {
       try {
         const response = await userAPI.getUserLikes({
-          userId: this.currentUser.id,
+          userId,
         });
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
@@ -215,23 +207,6 @@ export default {
       } catch (error) {
         console.log("error");
       }
-    },
-    createTweet(data) {
-      console.log(data);
-      this.tweets.unshift({
-        createdAt: data.data.tweet.createdAt,
-        id: data.data.tweet.id,
-        UserId: data.data.tweet.UserId,
-        likeCount: 0,
-        replyCount: 0,
-        isLiked: false,
-        description: data.data.tweet.description,
-        User: {
-          account: this.currentUser.account,
-          avatar: this.currentUser.avatar,
-          name: this.currentUser.name,
-        },
-      });
     },
     tweetChange() {
       this.UserTweet = true;
@@ -250,9 +225,6 @@ export default {
       this.UserRepliedTweet = false;
       this.UserLike = true;
       this.active = "like";
-    },
-    replyTweetData(tweet) {
-      this.replyTweet = tweet;
     },
   },
 };
@@ -280,9 +252,6 @@ export default {
       color: #657786
       text-align: center
       cursor: pointer
-    .at
-      color: #FF6600
-      border-bottom: 2px solid #ff6600
 
 .nav-tabs .nav-link:focus,
 .nav-tabs .nav-link:hover,
@@ -307,8 +276,6 @@ h3
 .TimeLine
   width: 600px
   height: 100vh
-  border-left: 1px solid #e6ecf0
-  border-right: 1px solid #e6ecf0
 
 .substitute
   font-weight: bold

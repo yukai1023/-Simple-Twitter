@@ -77,7 +77,6 @@
                 style="width: 570px; height: 110px"
                 rows="7"
                 cols="20"
-                required
                 autofocus
               ></textarea>
             </div>
@@ -91,17 +90,18 @@
 
 <script>
 import { mapState } from "vuex";
+import { Toast } from "./../utils/helpers";
 import userAPI from "./../apis/users";
 export default {
   data() {
     return {
-      user: [],
       isProcessing: false,
       getUser: false,
+      user: [],
     };
   },
   computed: {
-    ...mapState(["currentUser", "isAuthenticated"]),
+    ...mapState(["currentUser"]),
   },
   created() {
     this.fetchUsers();
@@ -142,10 +142,19 @@ export default {
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-
+        Toast.fire({
+          icon: "success",
+          title: "成功編輯個人資料！",
+        });
+        this.isProcessing = false;
         document.getElementById("close").click();
+        this.$router.go(0);
       } catch (error) {
         this.isProcessing = false;
+        Toast.fire({
+          icon: "error",
+          title: "請稍後再試",
+        });
       }
     },
   },

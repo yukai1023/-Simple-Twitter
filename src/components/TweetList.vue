@@ -21,8 +21,9 @@
   </div>
 </template>
 <script>
+import { Toast } from "./../utils/helpers";
 import adminAPI from "./../apis/admin";
-import moment from "moment";
+import { fromNowFilter } from "./../utils/mixins";
 export default {
   props: {
     initialTweet: {
@@ -30,14 +31,7 @@ export default {
       required: true,
     },
   },
-  filters: {
-    fromNow(datetime) {
-      if (!datetime) {
-        return "-";
-      }
-      return moment(datetime).fromNow();
-    },
-  },
+  mixins: [fromNowFilter],
   methods: {
     async deleteTweet(tweetId) {
       try {
@@ -47,10 +41,18 @@ export default {
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-        this.$emit('after-delete-tweet', tweetId)
+        this.$emit("after-delete-tweet", tweetId);
+        Toast.fire({
+          icon: "success",
+          title: "成功刪除推文！",
+        });
         this.isProcessing = false;
       } catch (error) {
         this.isProcessing = false;
+        Toast.fire({
+          icon: "error",
+          title: "請稍後再試",
+        });
       }
     },
   },
@@ -69,6 +71,7 @@ export default {
     width: 50px
     height: 50px
     border-radius: 100px
+    object-fit: cover
   .content
     margin-left: 15px
     color: #657786

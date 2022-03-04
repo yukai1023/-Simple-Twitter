@@ -6,42 +6,56 @@
         <button type="button" @click="$router.back()" id="return-btn"></button>
       </label>
       <div class="account">
-        <label class="name">{{ user.name }}</label>
-        <label class="tweets">{{ user.tweetCount }}推文</label>
+        <label class="name">{{ initialUser.name }}</label>
+        <label class="tweets">{{ initialUser.tweetCount }}推文</label>
       </div>
     </div>
 
     <div class="profile">
       <div class="photo">
         <div class="modal-photo">
-          <img class="background" :src="user.cover" />
-          <img class="face" :src="user.avatar" alt="" />
+          <img class="background" :src="initialUser.cover" />
+          <img class="face" :src="initialUser.avatar" alt="" />
         </div>
       </div>
       <div class="editBtn">
-        <button data-bs-toggle="modal" data-bs-target="#edit-modal">
-          編輯個人資料
+        <img src="../images/message.png" alt="" />
+        <img src="../images/noti.png" alt="" />
+        <button
+          v-if="initialUser.isFollowing"
+          class="followingBtn"
+          @click.stop.prevent="unFollow(initialUser.id)"
+          :disabled="isProcessing"
+        >
+          正在跟隨
+        </button>
+        <button
+          v-else
+          @click.stop.prevent="addFollow(initialUser.id)"
+          :disabled="isProcessing"
+        >
+          跟隨
         </button>
       </div>
       <div class="content">
-        <p class="name">{{ user.name }}</p>
-        <p class="account">@{{ user.account }}</p>
+        <p class="name">{{ initialUser.name }}</p>
+        <p class="account">@{{ initialUser.account }}</p>
         <p class="introduce">
-          {{ user.introduction }}
+          {{ initialUser.introduction }}
         </p>
         <div class="follow">
           <router-link
-            v-if="typeof user.id !== 'undefined'"
+            v-if="typeof initialUser.id !== 'undefined'"
             class="number"
-            :to="{ name: 'followingList', params: { id: user.id } }"
-            >{{ user.following }} 個</router-link
+            :to="{ name: 'followingList', params: { id: initialUser.id } }"
+            >{{ initialUser.following }} 個</router-link
           >
           <span class="following">跟隨中</span>
           <router-link
-            v-if="typeof user.id !== 'undefined'"
+            v-if="typeof initialUser.id !== 'undefined'"
             class="number"
-            :to="{ name: 'followerList', params: { id: user.id } }"
-            >{{ user.followers }} 位</router-link
+            :to="{ name: 'followerList', params: { id: initialUser.id } }"
+            >{{ initialUser.followers }} 位</router-link
           >
           <span class="follower">跟隨者</span>
         </div>
@@ -51,30 +65,53 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 import userAPI from "./../apis/users";
 export default {
+  props: {
+    initialUser: {
+      type: [Array, Object],
+      required: true,
+    },
+  },
   data() {
     return {
+      isProcessing: false,
       user: [],
     };
   },
-  computed: {
-    ...mapState(["currentUser"]),
-  },
-  created() {
-    this.fetchUsers();
-  },
   methods: {
-    async fetchUsers() {
+    async addFollow(userId) {
       try {
-        const response = await userAPI.getUser({ userId: this.currentUser.id });
-        if (response.statusText !== "OK") {
-          throw new Error(response.statusText);
+        this.isProcessing = true;
+        const { data } = await userAPI.addFollow({ id: userId });
+        // STEP 4: 若請求過程有錯，則進到錯誤處理
+        if (data.status !== "success") {
+          throw new Error(data.message);
         }
-        this.user = response.data.data.user;
+        this.initialUser = {
+          ...this.initialUser,
+          isFollowing: true,
+        };
+        this.isProcessing = false;
       } catch (error) {
-        console.log("error");
+        this.isProcessing = false;
+      }
+    },
+    async unFollow(userId) {
+      try {
+        this.isProcessing = true;
+        const { data } = await userAPI.unFollow({ userId });
+        // STEP 4: 若請求過程有錯，則進到錯誤處理
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.initialUser = {
+          ...this.initialUser,
+          isFollowing: false,
+        };
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
       }
     },
   },
@@ -127,10 +164,11 @@ export default {
       border-radius: 100px
       border: 4px solid #FFFFFF
   .editBtn
-    text-align: right
+    display: flex
+    justify-content: end
     padding: 15px 15px 0 0
     button
-      width: 120px
+      width: 90px
       height: 35px
       border: 1px solid #FF6600
       border-radius: 100px
@@ -138,6 +176,17 @@ export default {
       font-weight: bold
       font-size: 15px
       line-height: 15px
+    .followingBtn
+      background: #FF6600
+      border-radius: 100px
+      font-weight: bold
+      font-size: 15px
+      line-height: 15px
+      color: #FFFFFF
+    img
+      width: 35px
+      height: 35px
+      margin: 0 15px 0 0
   .content
     padding-left: 15px
     p

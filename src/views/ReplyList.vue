@@ -4,10 +4,17 @@
     <NavBar />
     <!--推文模板-->
     <TweetModal />
+    <!--回覆模板-->
+    <ReplyModal :initial-data="tweet" :initial-user="user" />
     <div class="main">
-      <!--中間個人資料-->
-      <ReplyTweet />
-      <!--編輯個人資料模板-->
+      <!--中間回覆貼文-->
+      <ReplyTweet :initial-tweet="tweet" />
+      <!--中間回覆留言-->
+      <UserRepliedTweet
+        v-for="tweetReply in tweetReplies"
+        :key="'tweetReply' + tweetReply.id"
+        :initial-replied="tweetReply"
+      />
     </div>
     <!--右側熱門用戶-->
     <div class="PopularUser">
@@ -19,37 +26,44 @@
 
 <script>
 import NavBar from "./../components/NavBar";
-import TweetModal from "./../components/TweetModal";
+import ReplyModal from "./../components/ReplyModal";
 import ReplyTweet from "./../components/ReplyTweet";
+import TweetModal from "./../components/TweetModal";
 import PopularUser from "./../components/PopularUser";
 import userAPI from "../apis/users";
+import UserRepliedTweet from "./../components/UserRepliedTweet";
 import { mapState } from "vuex";
 export default {
   components: {
     NavBar,
+    ReplyModal,
     TweetModal,
     PopularUser,
     ReplyTweet,
+    UserRepliedTweet,
   },
   data() {
     return {
       users: [],
-      tweets: [],
-      repliedTweets: [],
-      likes: [],
-      UserTweet: true,
-      UserRepliedTweet: false,
-      UserLike: false,
+      user: [],
+      tweet: [],
+      tweetReplies: [],
     };
   },
   computed: {
-    ...mapState(["currentUser", "isAuthenticated"]),
+    ...mapState(["currentUser", "replyCreate"]),
+  },
+  watch: {
+    replyCreate(newValue) {
+      this.createReply(newValue);
+    },
   },
   created() {
     this.fetchUsers();
-    this.fetchUserTweets();
-    this.fetchUserRepliedTweets();
-    this.fetchUserLikes();
+    this.fetchUser();
+    const { id: tweetId } = this.$route.params;
+    this.fetchTweet(tweetId);
+    this.fetchTweetReplied(tweetId);
   },
   methods: {
     async fetchUsers() {
@@ -58,34 +72,44 @@ export default {
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
-        console.log("getUser");
         this.users = response.data.data.users;
       } catch (error) {
         console.log("error");
       }
     },
-    async fetchUserTweets() {
+    async fetchTweet(tweetId) {
       try {
-        const response = await userAPI.getUserTweets({
-          userId: this.currentUser.id,
+        const response = await userAPI.getTweet({
+          tweetId,
         });
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
-        this.tweets = response.data.data.tweets;
+        this.tweet = response.data.data.tweet;
       } catch (error) {
         console.log("error");
       }
     },
-    async fetchUserRepliedTweets() {
+    async fetchTweetReplied(tweetId) {
       try {
-        const response = await userAPI.getUserRepliedTweets({
-          userId: this.currentUser.id,
+        const response = await userAPI.getTweetReplies({
+          tweetId,
         });
         if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
-        this.repliedTweets = response.data.data.replies;
+        this.tweetReplies = response.data.data.replies;
+      } catch (error) {
+        console.log("error");
+      }
+    },
+    async fetchUser() {
+      try {
+        const response = await userAPI.getUser({ userId: this.currentUser.id });
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
+        }
+        this.user = response.data.data.user;
       } catch (error) {
         console.log("error");
       }
@@ -102,6 +126,22 @@ export default {
       } catch (error) {
         console.log("error");
       }
+    },
+    createReply(data) {
+      this.tweetReplies.push({
+        createdAt: data.data.reply.createdAt,
+        TweetId: data.data.reply.TweetId,
+        UserId: data.data.reply.UserId,
+        id: data.data.reply.id,
+        isLiked: false,
+        replyTo: data.data.reply.replyTo,
+        comment: data.data.reply.comment,
+        User: {
+          account: this.currentUser.account,
+          avatar: this.currentUser.avatar,
+          name: this.currentUser.name,
+        },
+      });
     },
   },
 };

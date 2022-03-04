@@ -1,51 +1,176 @@
 <template>
-  <div class="userSetting">
-    <div class="title">
-      <h3>帳戶設定</h3>
+  <form @submit.stop.prevent="handleSubmit">
+    <div class="userSetting">
+      <div class="title">
+        <h3>帳戶設定</h3>
+      </div>
+      <div class="input">
+        <div class="account">
+          <label for="account" class="inp">
+            <span class="label">帳號</span>
+            <input
+              id="account"
+              name="account"
+              type="text"
+              placeholder=""
+              v-model="user.account"
+            />
+          </label>
+        </div>
+        <div class="name">
+          <label for="name" class="inp">
+            <span class="label">名稱</span>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              placeholder=""
+              v-model="user.name"
+            />
+          </label>
+        </div>
+        <div class="email">
+          <label for="email" class="inp">
+            <span class="label">Email</span>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder=""
+              v-model="user.email"
+            />
+          </label>
+        </div>
+        <div class="password">
+          <label for="password" class="inp">
+            <span class="label">密碼</span>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder=""
+              v-model="password"
+            />
+          </label>
+        </div>
+        <div class="check">
+          <label for="check-password" class="inp">
+            <span class="label">密碼確認</span>
+            <input
+              id="check-password"
+              name="checkPassword"
+              type="password"
+              placeholder=""
+              v-model="checkPassword"
+            />
+          </label>
+        </div>
+        <div class="button">
+          <button :disabled="isProcessing" type="submit">儲存</button>
+        </div>
+      </div>
     </div>
-    <div class="input">
-      <div class="account">
-        <label for="inp" class="inp">
-          <span class="label">帳號</span>
-          <input type="text" id="inp" placeholder="" value="@wonderman" />
-        </label>
-      </div>
-      <div class="name">
-        <label for="inp" class="inp">
-          <span class="label">名稱</span>
-          <input type="text" id="inp" placeholder="" value="John Doe" />
-        </label>
-      </div>
-      <div class="email">
-        <label for="inp" class="inp">
-          <span class="label">Email</span>
-          <input
-            type="text"
-            id="inp"
-            placeholder=""
-            value="JohnDoe@gmail.com"
-          />
-        </label>
-      </div>
-      <div class="passwors">
-        <label for="inp" class="inp">
-          <span class="label">密碼</span>
-          <input type="text" id="inp" placeholder="" />
-        </label>
-      </div>
-      <div class="check">
-        <label for="inp" class="inp">
-          <span class="label">密碼確認</span>
-          <input type="text" id="inp" placeholder="" />
-        </label>
-      </div>
-      <div class="button">
-        <button>儲存</button>
-      </div>
-    </div>
-  </div>
+  </form>
 </template>
+<script>
+import authorizationAPI from "./../apis/authorization";
+import { Toast } from "./../utils/helpers";
+export default {
+  props: {
+    initialUser: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      user: this.initialUser,
+      isProcessing: false,
+      password: "",
+      checkPassword: "",
+    };
+  },
+  methods: {
+    async handleSubmit() {
+      try {
+        this.isProcessing = true;
+        if (!this.user.account) {
+          Toast.fire({
+            icon: "error",
+            title: "請填寫帳號",
+          });
+          this.isProcessing = false;
+          return;
+        } else if (!this.user.name) {
+          Toast.fire({
+            icon: "error",
+            title: "請填寫姓名",
+          });
+          this.isProcessing = false;
+          return;
+        } else if (!this.user.email) {
+          Toast.fire({
+            icon: "error",
+            title: "請填寫信箱",
+          });
+          this.isProcessing = false;
+          return;
+        } else if (!this.password) {
+          Toast.fire({
+            icon: "error",
+            title: "請填寫密碼",
+          });
+          this.isProcessing = false;
+          return;
+        } else if (!this.checkPassword) {
+          Toast.fire({
+            icon: "error",
+            title: "請填寫第二次密碼",
+          });
+          this.isProcessing = false;
+          return;
+        } else if (this.user.account.length > 50) {
+          Toast.fire({
+            icon: "error",
+            title: "名稱請勿超過50個字",
+          });
+          this.isProcessing = false;
+          return;
+        } else if (this.password !== this.checkPassword) {
+          Toast.fire({
+            icon: "error",
+            title: "請輸入相同的密碼",
+          });
+          this.isProcessing = false;
+          return;
+        }
 
+        const { data } = await authorizationAPI.editAccount({
+          userId: this.user.id,
+          account: this.user.account,
+          name: this.user.name,
+          email: this.user.email,
+          password: this.password,
+          checkPassword: this.checkPassword,
+        });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        Toast.fire({
+          icon: "success",
+          title: "成功更改帳戶設定",
+        });
+        this.isProcessing = false;
+        this.$store.commit("setCurrentUser", this.user);
+      } catch (error) {
+        this.isProcessing = false;
+        console.log(error);
+      }
+    },
+  },
+};
+</script>
 <style lang="sass" scoped>
 .userSetting
   width: 100%
@@ -106,4 +231,7 @@
     font-weight: 500
     background: #F5F8FA
     color: #1C1C1C
+    &:hover,
+    &:focus
+      box-shadow: inset 0 -2px 0 rgba(80, 181, 255, 1)
 </style>

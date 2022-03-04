@@ -3,18 +3,18 @@
     <img class="background" :src="initialUser.cover" />
     <img class="face" :src="initialUser.avatar" alt="" />
     <div class="content">
-      <p class="name">{{ initialUser.name }}</p>
-      <p class="account">@{{ initialUser.account }}</p>
+      <p class="name">{{ initialUser.name | ellipsis }}</p>
+      <p class="account">@{{ initialUser.account | ellipsis }}</p>
       <div class="icon">
         <img class="reply" src="../images/icon_reply.png" alt="" />
-        <span>{{ initialUser.tweetNum }}</span>
+        <span>{{ initialUser.tweetCount }}</span>
         <img class="like" src="../images/icon_like.png" alt="" />
-        <span>{{ initialUser.likeNum }}</span>
+        <span>{{ initialUser.likeCount }}</span>
       </div>
       <div class="follow">
-        <span class="number">{{ initialUser.followingNum }} 個</span>
+        <span class="number">{{ initialUser.following }} 個</span>
         <span class="following">跟隨中</span>
-        <span class="number">{{ initialUser.followerNum }} 位</span>
+        <span class="number">{{ initialUser.followers }} 位</span>
         <span class="follower">跟隨者</span>
       </div>
     </div>
@@ -27,6 +27,15 @@ export default {
     initialUser: {
       type: Object,
       required: true,
+    },
+  },
+  filters: {
+    ellipsis(value) {
+      if (!value) return "";
+      if (value.length > 15) {
+        return value.slice(0, 15) + "...";
+      }
+      return value;
     },
   },
 };

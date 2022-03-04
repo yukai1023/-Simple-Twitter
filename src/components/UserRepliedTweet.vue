@@ -5,26 +5,39 @@
     </div>
     <div class="TweetsContent">
       <div class="UserAccount">
-        <label class="name">{{ tweet.User.name }}</label>
-        <label class="account">@{{ tweet.User.account }}</label>
+        <label class="name">{{ initialReplied.User.name }}</label>
+        <label class="account">@{{ initialReplied.User.account }}</label>
         <span>・</span>
-        <label class="time">{{ tweet.createdAt | fromNow }}</label>
+        <label class="time">{{ initialReplied.createdAt | fromNow }}</label>
       </div>
       <div class="replyTo">
         <span>回覆給 </span>
-        <span class="user">@{{ tweet.replyTo }}</span>
+        <router-link
+          class="user"
+          v-if="typeof initialReplied.UserId !== 'undefined'"
+          :to="{ name: 'OtherUser', params: { id: initialReplied.UserId } }"
+        >
+          @{{ initialReplied.replyTo }}
+        </router-link>
       </div>
       <div class="article">
-        <p>
-          {{ tweet.comment }}
-        </p>
+        <router-link
+          v-if="typeof initialReplied.TweetId !== 'undefined'"
+          class="link"
+          :to="{
+            name: 'replyList',
+            params: { id: initialReplied.TweetId },
+          }"
+        >
+          {{ initialReplied.comment }}
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import moment from "moment";
+import { fromNowFilter } from "./../utils/mixins";
 export default {
   props: {
     initialReplied: {
@@ -32,14 +45,7 @@ export default {
       required: true,
     },
   },
-  filters: {
-    fromNow(datetime) {
-      if (!datetime) {
-        return "-";
-      }
-      return moment(datetime).fromNow();
-    },
-  },
+  mixins: [fromNowFilter],
   data() {
     return {
       tweet: this.initialReplied,
@@ -78,6 +84,9 @@ export default {
   .article
     font-size: 15px
     line-height: 22px
+    .link
+      color: #1C1C1C
+      text-decoration: none
   .replyLike
     display: flex
     padding-right: 50px
@@ -99,6 +108,7 @@ export default {
   color: #657786
   .user
     color: #ff6600
+    text-decoration: none
 
 p
   margin: 0px

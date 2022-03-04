@@ -1,19 +1,30 @@
 <template>
   <div class="Usertweet">
-    <div @click="replyLink()" class="UserPhoto">
-      <img :src="tweet.User.avatar" alt="" />
+    <div class="UserPhoto">
+      <router-link
+        v-if="typeof this.tweet.UserId !== 'undefined'"
+        :to="{ name: 'OtherUser', params: { id: this.tweet.UserId } }"
+      >
+        <img :src="tweet.User.avatar" alt="" />
+      </router-link>
     </div>
     <div class="TweetsContent">
-      <div class="UserAccount" @click="replyLink()">
-        <label class="name">{{ tweet.User.name }}</label>
+      <div class="UserAccount">
+        <router-link
+          v-if="typeof this.tweet.UserId !== 'undefined'"
+          class="name"
+          :to="{ name: 'OtherUser', params: { id: this.tweet.UserId } }"
+        >
+          {{ tweet.User.name }}
+        </router-link>
         <label class="account">@{{ tweet.User.account }}</label>
         <span>・</span>
         <label class="time">{{ tweet.createdAt | fromNow }}</label>
       </div>
       <div class="article">
         <router-link
+          v-if="typeof this.tweet.id !== 'undefined'"
           class="link"
-          id="replyLink"
           :to="{
             name: 'replyList',
             params: { id: this.tweet.id },
@@ -55,7 +66,7 @@
 </template>
 
 <script>
-import moment from "moment";
+import { fromNowFilter } from "./../utils/mixins";
 import userAPI from "./../apis/users";
 export default {
   props: {
@@ -70,14 +81,7 @@ export default {
       isProcessing: false,
     };
   },
-  filters: {
-    fromNow(datetime) {
-      if (!datetime) {
-        return "-";
-      }
-      return moment(datetime).fromNow();
-    },
-  },
+  mixins: [fromNowFilter],
   methods: {
     async addLike(tweetId) {
       try {
@@ -115,8 +119,8 @@ export default {
         this.isProcessing = false;
       }
     },
-    replyLink() {
-      document.getElementById("replyLink").click();
+    replyTweetData(tweet) {
+      this.$emit("reply-tweet-data", tweet);
     },
   },
 };
@@ -127,17 +131,19 @@ export default {
   display: flex
   padding: 13px 10px 13px 15px
   border-bottom: 1px solid #E6ECF0
+  border-left: 1px solid #E6ECF0
+  border-right: 1px solid #E6ECF0
 
 .UserPhoto
   width: 50px
   height: 50px
-  cursor: pointer
   img
     width: 50px
     height: 50px
     display: block
     object-fit: cover
     border-radius: 100px
+    cursor: pointer
 
 .TweetsContent
   padding-left: 10px
@@ -145,12 +151,12 @@ export default {
     font-size: 15px
     line-height: 22px
     color: #657786
-    label
-      cursor: pointer
     .name
       margin-right: 5px
       color: black
       font-weight: bold
+      cursor: pointer
+      text-decoration: none
   .article
     font-size: 15px
     line-height: 22px

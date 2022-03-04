@@ -49,9 +49,7 @@ export default {
       }
     },
     afterDeleteTweet(tweetId) {
-      this.tweets = this.tweets.filter(
-        (tweet) => tweet.id !== tweetId
-      );
+      this.tweets = this.tweets.filter((tweet) => tweet.id !== tweetId);
     },
   },
 };
@@ -62,6 +60,7 @@ export default {
   display: flex
 .list-container
   width: 100%
+  padding-left: 378px
   .title
     display: flex
     height: 55px

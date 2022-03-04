@@ -11,12 +11,26 @@
         <label class="time">{{ tweet.createdAt | fromNow }}</label>
       </div>
       <div class="article">
-        <p>
+        <router-link
+          v-if="typeof this.tweet.id !== 'undefined'"
+          class="link"
+          :to="{
+            name: 'replyList',
+            params: { id: this.tweet.id },
+          }"
+        >
           {{ tweet.description }}
-        </p>
+        </router-link>
       </div>
       <div class="replyLike">
-        <img class="replyIcon" src="../images/icon_reply.png" alt="" />
+        <img
+          class="replyIcon click"
+          src="../images/icon_reply.png"
+          data-bs-toggle="modal"
+          data-bs-target="#reply-modal"
+          @click="replyTweetData(tweet)"
+          alt=""
+        />
         <label>{{ tweet.replyCount }}</label>
         <img
           v-if="tweet.isLiked"
@@ -41,7 +55,7 @@
 </template>
 
 <script>
-import moment from "moment";
+import { fromNowFilter } from "./../utils/mixins";
 import userAPI from "./../apis/users";
 export default {
   props: {
@@ -50,14 +64,7 @@ export default {
       required: true,
     },
   },
-  filters: {
-    fromNow(datetime) {
-      if (!datetime) {
-        return "-";
-      }
-      return moment(datetime).fromNow();
-    },
-  },
+  mixins: [fromNowFilter],
   data() {
     return {
       tweet: this.initialTweet,
@@ -101,6 +108,9 @@ export default {
         this.isProcessing = false;
       }
     },
+    replyTweetData(tweet) {
+      this.$emit("reply-tweet-data", tweet);
+    },
   },
 };
 </script>
@@ -141,8 +151,12 @@ export default {
   .article
     font-size: 15px
     line-height: 22px
+    .link
+      color: #1C1C1C
+      text-decoration: none
   .replyLike
     display: flex
+    padding-top: 10px
     padding-right: 50px
     font-size: 13px
     line-height: 13px

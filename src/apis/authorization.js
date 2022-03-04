@@ -17,12 +17,22 @@ export default {
       password
     })
   },
-  signUp ({ name, email, password, passwordCheck }) {
-    return apiHelper.post('/signup', {
+  signUp ({ account, name, email, password, checkPassword }) {
+    return apiHelper.post('users', {
+      account,
       name,
       email,
       password,
-      passwordCheck
+      checkPassword
+    })
+  },
+  editAccount ({ userId, account, name, email, password, checkPassword }) {
+    return apiHelper.put(`/users/${userId}/account`, {
+      account,
+      name,
+      email,
+      password,
+      checkPassword
     })
   }
 }

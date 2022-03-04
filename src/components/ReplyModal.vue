@@ -1,96 +1,103 @@
 <template>
-  <div
-    class="modal fade"
-    id="reply-modal"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <img
-            aria-label="Close"
-            class="cross"
-            src="../images/cross@2x.png"
-            data-bs-dismiss="modal"
-            type="button"
-          />
-        </div>
-        <div class="modal-body" id="reply-modal-body">
-          <div class="TimeLine">
-            <div class="Usertweet">
-              <div class="UserPhoto">
-                <img
-                  :src="[
-                    getData
-                      ? initialData.User.avatar
-                      : 'https://i.imgur.com/zYddUs8.png',
-                  ]"
-                />
-                <p class="line"></p>
-              </div>
-              <div class="TweetsContent">
-                <div class="UserAccount">
-                  <label class="name">{{
-                    getData ? initialData.User.name : ""
-                  }}</label>
-                  <label class="account"
-                    >@{{ getData ? initialData.User.account : "" }}</label
-                  >
-                  <span>・</span>
-                  <label class="time">{{
-                    initialData.createdAt | fromNow
-                  }}</label>
+  <form @submit.stop.prevent="handleSubmit(content)">
+    <div
+      class="modal fade"
+      id="reply-modal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <img
+              aria-label="Close"
+              id="replyClose"
+              class="cross"
+              src="../images/cross@2x.png"
+              data-bs-dismiss="modal"
+              type="button"
+            />
+          </div>
+          <div class="modal-body" id="reply-modal-body">
+            <div class="TimeLine">
+              <div class="Usertweet">
+                <div class="UserPhoto">
+                  <img
+                    :src="[
+                      getData
+                        ? initialData.User.avatar
+                        : 'https://i.imgur.com/zYddUs8.png',
+                    ]"
+                  />
+                  <p class="line"></p>
                 </div>
-                <div class="article">
-                  <p class="content">
-                    {{ getData ? initialData.description : "" }}
-                  </p>
-                  <div class="replyTo">
-                    <span>回覆給 </span>
-                    <span class="user"
-                      >@{{ getData ? initialData.User.name : "" }}</span
+                <div class="TweetsContent">
+                  <div class="UserAccount">
+                    <label class="name">{{
+                      getData ? initialData.User.name : ""
+                    }}</label>
+                    <label class="account"
+                      >@{{ getData ? initialData.User.account : "" }}</label
                     >
+                    <span>・</span>
+                    <label class="time">{{
+                      initialData.createdAt | fromNow
+                    }}</label>
+                  </div>
+                  <div class="article">
+                    <p class="content">
+                      {{ getData ? initialData.description : "" }}
+                    </p>
+                    <div class="replyTo">
+                      <span>回覆給 </span>
+                      <span class="user"
+                        >@{{ getData ? initialData.User.name : "" }}</span
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="replyContainer">
-            <div class="face">
-              <img
-                :src="[
-                  getData
-                    ? initialUser.avatar
-                    : 'https://i.imgur.com/zYddUs8.png',
-                ]"
-                alt=""
-              />
+            <div class="replyContainer">
+              <div class="face">
+                <img
+                  :src="[
+                    getData
+                      ? initialUser.avatar
+                      : 'https://i.imgur.com/zYddUs8.png',
+                  ]"
+                  alt=""
+                />
+              </div>
+              <textarea
+                id="data"
+                class="form-control input"
+                style="width: 700px; height: 160px"
+                rows="7"
+                cols="20"
+                v-model="content"
+                placeholder="推你的回覆"
+                required
+                autofocus
+              ></textarea>
             </div>
-            <textarea
-              id="data"
-              class="form-control input"
-              style="width: 700px; height: 160px"
-              rows="7"
-              cols="20"
-              placeholder="推你的回覆"
-              required
-              autofocus
-            ></textarea>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-primary">回覆</button>
+          <div class="modal-footer">
+            <button :disabled="isProcessing" type="submit" class="btn-primary">
+              回覆
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
-import { mapState } from "vuex";
-import moment from "moment";
+import { fromNowFilter } from "./../utils/mixins";
+import userAPI from "./../apis/users";
+import { Toast } from "./../utils/helpers";
 export default {
   props: {
     initialData: {
@@ -102,25 +109,57 @@ export default {
       required: true,
     },
   },
-  computed: {
-    ...mapState(["currentUser", "isAuthenticated"]),
-  },
   data() {
     return {
       isProcessing: false,
-      user: [],
       getData: false,
+      content: "",
     };
   },
   beforeUpdate() {
     this.getData = true;
   },
-  filters: {
-    fromNow(datetime) {
-      if (!datetime) {
-        return "-";
+  mixins: [fromNowFilter],
+  methods: {
+    async handleSubmit(content) {
+      try {
+        this.isProcessing = true;
+        if (this.content.trim() === "") {
+          Toast.fire({
+            icon: "error",
+            title: "請輸入內容",
+          });
+          return;
+        } else if (this.content.length > 140) {
+          Toast.fire({
+            icon: "error",
+            title: "字數不可超過 140 字",
+          });
+          return;
+        }
+        const { data } = await userAPI.replyTweet({
+          tweetId: this.initialData.id,
+          comment: content,
+        });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.$store.commit("createReply", data);
+        this.content = "";
+        this.isProcessing = false;
+        Toast.fire({
+          icon: "success",
+          title: "成功發送回覆！",
+        });
+        document.getElementById("replyClose").click();
+      } catch (error) {
+        this.isProcessing = false;
+        Toast.fire({
+          icon: "error",
+          title: "請稍後再試",
+        });
       }
-      return moment(datetime).fromNow();
     },
   },
 };

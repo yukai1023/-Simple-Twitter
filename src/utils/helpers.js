@@ -1,6 +1,6 @@
 // ./src/utils/helpers.js
 import axios from 'axios'
-
+import Swal from 'sweetalert2'
 const baseURL = 'https://evening-falls-05083.herokuapp.com/api'
 // https://evening-falls-05083.herokuapp.com/api
 // https://evening2-falls-05083.herokuapp.com/api
@@ -21,5 +21,10 @@ axiosInstance.interceptors.request.use(
   },
   err => Promise.reject(err)
 )
-
+export const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000
+})
 export const apiHelper = axiosInstance

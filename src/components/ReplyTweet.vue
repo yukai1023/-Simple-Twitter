@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="line">
     <div class="header">
       <label class="return" for="return-btn">
         <img src="../images/arrow.png" alt="" />
@@ -12,29 +12,48 @@
     <div class="Usertweet">
       <div class="userTop">
         <div class="UserPhoto">
-          <img src="https://i.imgur.com/zYddUs8.png" alt="" />
+          <img
+            @click="routerClick"
+            :src="[
+              getData
+                ? initialTweet.User.avatar
+                : 'https://i.imgur.com/zYddUs8.png',
+            ]"
+            alt=""
+          />
         </div>
+        <router-link
+          v-if="typeof initialTweet.UserId !== 'undefined'"
+          class="link"
+          id="otherUser"
+          :to="{
+            name: 'OtherUser',
+            params: { id: initialTweet.UserId },
+          }"
+        >
+        </router-link>
         <div class="UserAccount">
-          <label class="name">123</label>
-          <p class="account">@123</p>
+          <label @click="routerClick" class="name">{{
+            getData ? initialTweet.User.name : ""
+          }}</label>
+          <p class="account">{{ getData ? initialTweet.User.account : "" }}</p>
         </div>
       </div>
       <div class="TweetsContent">
         <div class="article">
           <p>
-            Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco
-            cillum dolor. Voluptate exercitation incididunt aliquip deserunt
-            reprehenderit elit laborum.
+            {{ getData ? initialTweet.description : "" }}
           </p>
         </div>
         <div class="time">
-          <p>2018-12-23</p>
+          <span>{{ initialTweet.createdAt | fromTime }}・</span>
+          <span>{{ initialTweet.createdAt | fromDay }}</span>
         </div>
       </div>
       <div class="replyLike">
-        <span>34 </span>
+        <span> {{ initialTweet.replyCount }} </span>
         <span class="gray">回覆</span>
-        <span>808 </span>
+        <span> {{ initialTweet.likeCount }} </span>
         <span class="gray">喜歡次數</span>
       </div>
       <div class="icon">
@@ -46,7 +65,17 @@
           alt=""
         />
         <img
+          v-if="initialTweet.isLiked"
           :disabled="isProcessing"
+          @click.stop.prevent="unLike(initialTweet.id)"
+          class="likeIcon click"
+          src="../images/icon_like_fill.png"
+          alt=""
+        />
+        <img
+          v-else
+          :disabled="isProcessing"
+          @click.stop.prevent="addLike(initialTweet.id)"
           class="likeIcon click"
           src="../images/icon_like.png"
           alt=""
@@ -57,25 +86,73 @@
 </template>
 
 <script>
-import moment from "moment";
+import { fromNowFilter } from "./../utils/mixins";
+import userAPI from "../apis/users";
 export default {
+  props: {
+    initialTweet: {
+      type: [Array, Object],
+      required: true,
+    },
+  },
   data() {
     return {
       isProcessing: false,
+      getData: false,
     };
   },
-  filters: {
-    fromNow(datetime) {
-      if (!datetime) {
-        return "-";
+  beforeUpdate() {
+    this.getData = true;
+  },
+  mixins: [fromNowFilter],
+  methods: {
+    async addLike(tweetId) {
+      try {
+        this.isProcessing = true;
+        const { data } = await userAPI.addLike({ tweetId });
+        // STEP 4: 若請求過程有錯，則進到錯誤處理
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.initialTweet = {
+          ...this.initialTweet,
+          isLiked: true,
+        };
+        this.initialTweet.likeCount = this.initialTweet.likeCount + 1;
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
       }
-      return moment(datetime).fromNow();
+    },
+    async unLike(tweetId) {
+      try {
+        this.isProcessing = true;
+        const { data } = await userAPI.unLike({ tweetId });
+        // STEP 4: 若請求過程有錯，則進到錯誤處理
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.initialTweet = {
+          ...this.initialTweet,
+          isLiked: false,
+        };
+        this.initialTweet.likeCount = this.initialTweet.likeCount - 1;
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
+      }
+    },
+    routerClick() {
+      document.getElementById("otherUser").click();
     },
   },
 };
 </script>
 
 <style lang="sass" scoped>
+.line
+  border-bottom: 1px solid #E6ECF0
+
 .header
   width: 600px
   height: 55px
@@ -101,7 +178,7 @@ export default {
 .Usertweet
   display: flex
   flex-direction: column
-  padding: 13px 10px 13px 15px
+  padding: 13px 10px 0px 15px
   border-top: 1px solid #E6ECF0
 
 .userTop
@@ -116,6 +193,7 @@ export default {
       display: block
       object-fit: cover
       border-radius: 100px
+      cursor: pointer
   .UserAccount
     margin-left: 10px
     font-size: 15px
@@ -125,6 +203,7 @@ export default {
       margin-right: 5px
       color: black
       font-weight: bold
+      cursor: pointer
 
 .TweetsContent
   padding-left: 10px
@@ -135,8 +214,7 @@ export default {
     font-size: 15px
     line-height: 22px
     color: #657786
-    p
-      margin: 0 0 15px 0
+    margin: 0 0 15px 0
 
 .replyLike
   font-weight: bold
@@ -156,5 +234,6 @@ export default {
   margin: 10px 0 10px 0
   .replyIcon
     margin-right: 150px
-
+  .click
+    cursor: pointer
 </style>
