@@ -30,13 +30,14 @@ export default new Vuex.Store({
         ...currentUser
       }
       // 將使用者驗證用的 token 儲存在 state 中
-      state.token = localStorage.getItem('token')
       state.isAuthenticated = true
+      state.token = localStorage.getItem('token')
     },
     revokeAuthentication (state) {
       state.currentUser = {}
       state.isAuthenticated = false
       localStorage.removeItem('token')
+      localStorage.removeItem('role')
       // 登出時一併將 state 內的 token 移除
       state.token = ''
     },
@@ -57,29 +58,25 @@ export default new Vuex.Store({
   actions: {
     async fetchCurrentUser ({ state, commit }) {
       try {
-        if (state.currentUser.role === 'user') {
-          const { data } = await usersAPI.getCurrentUser()
-
-          const { id, name, account, avatar, role } = data.data.user
-          commit('setCurrentUser', {
-            id,
-            name,
-            account,
-            avatar,
-            role
-          })
-        } else if (state.currentUser.role === 'admin') {
-          const { data } = await adminAPI.getCurrentAdmin()
-
-          const { id, name, account, avatar, role } = data.data.user
-          commit('setCurrentUser', {
-            id,
-            name,
-            account,
-            avatar,
-            role
-          })
+        if (state.currentUser.role.length > 0) {
+          localStorage.setItem('role', state.currentUser.role)
         }
+        const roleInLocalStorage = localStorage.getItem('role')
+        let data
+        if (roleInLocalStorage === 'user') {
+          data = await usersAPI.getCurrentUser()
+        } else if (roleInLocalStorage === 'admin') {
+          data = await adminAPI.getCurrentAdmin()
+        }
+        const response = data.data.data.user
+        commit('setCurrentUser', {
+          id: response.id,
+          name: response.name,
+          account: response.account,
+          avatar: response.avatar,
+          role: response.role
+        })
+
         return true // add this line
       } catch (error) {
         console.error(error.message)

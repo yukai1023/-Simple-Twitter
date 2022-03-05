@@ -63,7 +63,7 @@ export default {
           throw new Error(data.message);
         }
         // 將 token 存放在 localStorage 內
-        this.$store.commit("setCurrentUser", data.data.user);
+        this.$store.commit("setCurrentUser", data.data.admin);
         localStorage.setItem("token", data.data.token);
         this.$router.push("/admin/main");
         Toast.fire({
