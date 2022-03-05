@@ -1,8 +1,8 @@
 # simple-twitter
-![image](https://github.com/yukai1023/Simple-Twitter/blob/main/use.gif)
 ## ※專案介紹(Project Introduction)
 此專案為前後端合作專案，打造相仿 [Twitter](https://twitter.com) 的頁面與功能。
 
+![image](https://github.com/yukai1023/Simple-Twitter/blob/main/use.gif)
 
 ## ※瀏覽專案(Browse Project)
 使用者測試帳號、密碼：
