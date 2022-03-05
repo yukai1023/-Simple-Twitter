@@ -49,8 +49,8 @@ npm run serve
 Listening on http://localhost:8080
 ```
 ## ※使用套件(Package)
-- moment
-- sweetalert2
+- [moment](https://www.npmjs.com/package/moment)
+- [sweetalert2](https://sweetalert2.github.io/)
 ## ※團隊成員(Team Member)
 #### 前端(Front End)
 - [Yukai](https://github.com/yukai1023) (self)
