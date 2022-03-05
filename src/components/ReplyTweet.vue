@@ -210,6 +210,9 @@ export default {
   .article
     font-size: 23px
     line-height: 34px
+    p
+      margin-top: 1rem
+      margin-bottom: 1rem
   .time
     font-size: 15px
     line-height: 22px
@@ -232,8 +235,10 @@ export default {
   width: 30px
   height: 30px
   margin: 10px 0 10px 0
+  img
+    width: 30px
   .replyIcon
-    margin-right: 150px
+    margin-right: 120px
   .click
     cursor: pointer
 </style>
