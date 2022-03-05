@@ -4,7 +4,7 @@
 
 ![image](https://github.com/yukai1023/Simple-Twitter/blob/main/use.gif)
 
-## ※瀏覽專案(Browse Project)
+## ※[瀏覽專案](https://yukai1023.github.io/Simple-Twitter/#/login)(Browse Project) 
 使用者測試帳號、密碼：
 ```
 帳號: user1
