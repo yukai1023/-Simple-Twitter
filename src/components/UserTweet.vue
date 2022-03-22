@@ -19,7 +19,18 @@
             params: { id: this.tweet.id },
           }"
         >
-          {{ tweet.description }}
+          <textarea-autosize
+            id="introduction"
+            name="introduction"
+            class="form-input"
+            v-model="tweet.description"
+            maxlength="160"
+            style="width: 500px; overflow: hidden"
+            :min-height="20"
+            :max-height="120"
+            readonly="readonly"
+            autofocus
+          />
         </router-link>
       </div>
       <div class="replyLike">
@@ -154,9 +165,15 @@ export default {
     .link
       color: #1C1C1C
       text-decoration: none
+    .form-input
+      border: none
+      color: #1C1C1C
+      resize: none
+      overflow: hidden
+      background-color: transparent
+      cursor: pointer
   .replyLike
     display: flex
-    padding-top: 10px
     padding-right: 50px
     font-size: 13px
     line-height: 13px

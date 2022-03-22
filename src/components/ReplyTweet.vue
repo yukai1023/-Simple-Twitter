@@ -14,11 +14,8 @@
         <div class="UserPhoto">
           <img
             @click="routerClick"
-            :src="[
-              getData
-                ? initialTweet.User.avatar
-                : 'https://i.imgur.com/zYddUs8.png',
-            ]"
+            v-if="initialTweet.User && initialTweet.User.avatar"
+            :src="initialTweet.User.avatar"
             alt=""
           />
         </div>
@@ -33,17 +30,34 @@
         >
         </router-link>
         <div class="UserAccount">
-          <label @click="routerClick" class="name">{{
-            getData ? initialTweet.User.name : ""
-          }}</label>
-          <p class="account">{{ getData ? initialTweet.User.account : "" }}</p>
+          <label
+            @click="routerClick"
+            class="name"
+            v-if="initialTweet.User && initialTweet.User.name"
+            >{{ initialTweet.User.name }}</label
+          >
+          <p
+            class="account"
+            v-if="initialTweet.User && initialTweet.User.account"
+          >
+            {{ initialTweet.User.account }}
+          </p>
         </div>
       </div>
       <div class="TweetsContent">
         <div class="article">
-          <p>
-            {{ getData ? initialTweet.description : "" }}
-          </p>
+          <textarea-autosize
+            id="introduction"
+            name="introduction"
+            class="form-input"
+            readonly="readonly"
+            v-model="initialTweet.description"
+            maxlength="160"
+            style="width: 550px; overflow: hidden"
+            :min-height="20"
+            :max-height="350"
+            autofocus
+          />
         </div>
         <div class="time">
           <span>{{ initialTweet.createdAt | fromTime }}・</span>
@@ -210,9 +224,12 @@ export default {
   .article
     font-size: 23px
     line-height: 34px
-    p
-      margin-top: 1rem
-      margin-bottom: 1rem
+    .form-input
+      border: none
+      color: #1C1C1C
+      resize: none
+      overflow: hidden
+      background-color: transparent
   .time
     font-size: 15px
     line-height: 22px

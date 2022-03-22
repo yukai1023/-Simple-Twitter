@@ -24,21 +24,22 @@
               <div class="Usertweet">
                 <div class="UserPhoto">
                   <img
-                    :src="[
-                      getData
-                        ? initialData.User.avatar
-                        : 'https://i.imgur.com/zYddUs8.png',
-                    ]"
+                    v-if="initialData.User && initialData.User.avatar"
+                    :src="initialData.User.avatar"
                   />
                   <p class="line"></p>
                 </div>
                 <div class="TweetsContent">
                   <div class="UserAccount">
-                    <label class="name">{{
-                      getData ? initialData.User.name : ""
-                    }}</label>
-                    <label class="account"
-                      >@{{ getData ? initialData.User.account : "" }}</label
+                    <label
+                      v-if="initialData.User && initialData.User.name"
+                      class="name"
+                      >{{ initialData.User.name }}</label
+                    >
+                    <label
+                      class="account"
+                      v-if="initialData.User && initialData.User.account"
+                      >@{{ initialData.User.account }}</label
                     >
                     <span>・</span>
                     <label class="time">{{
@@ -51,8 +52,10 @@
                     </p>
                     <div class="replyTo">
                       <span>回覆給 </span>
-                      <span class="user"
-                        >@{{ getData ? initialData.User.name : "" }}</span
+                      <span
+                        class="user"
+                        v-if="initialData.User && initialData.User.name"
+                        >@{{ initialData.User.name }}</span
                       >
                     </div>
                   </div>
