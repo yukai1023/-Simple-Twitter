@@ -1,10 +1,10 @@
 # simple-twitter
-
 ## ※專案介紹(Project Introduction)
-此專案為前後端合作專案，打造相仿 [Twitter](https://twitter.com) 的頁面與功能。
+此專案為前後端合作專案，建構相仿 [Twitter](https://twitter.com) 的頁面與功能。
 
+![image](https://github.com/yukai1023/Simple-Twitter/blob/main/use.gif)
 
-## ※瀏覽專案(Browse Project)
+## ※[瀏覽專案](https://yukai1023.github.io/Simple-Twitter/#/login)(Browse Project) 
 使用者測試帳號、密碼：
 ```
 帳號: user1
@@ -54,6 +54,6 @@ Listening on http://localhost:8080
 ## ※團隊成員(Team Member)
 #### 前端(Front End)
 - [Yukai](https://github.com/yukai1023) (self)
-#### 後端(Back End)
+#### 後端(Back End) ([repo](https://github.com/xnubber/twitter-api-2020))
 - [Yao](https://github.com/xnubber)
 - [Boochu](https://github.com/Prysline)
